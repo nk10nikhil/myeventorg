@@ -12,8 +12,21 @@ import { Badge } from "@/components/ui/badge"
 import { Download, Loader2, QrCode, Search } from "lucide-react"
 import AdminLayout from "@/components/admin-layout"
 import { DashboardStats } from "@/components/dashboard-stats"
+import ClientOnly from "@/components/client-only"
+
+// Configure page as server-side only
+export const dynamic = 'force-dynamic'
 
 export default function AdminDashboardPage() {
+  return (
+    <ClientOnly>
+      <DashboardPageContent />
+    </ClientOnly>
+  )
+}
+
+// Main component content moved inside this function
+function DashboardPageContent() {
   const router = useRouter()
   const { data: session, status } = useSession({
     required: true,

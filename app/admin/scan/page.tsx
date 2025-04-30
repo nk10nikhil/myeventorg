@@ -11,9 +11,30 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import AdminLayout from "@/components/admin-layout"
+import ClientOnly from "@/components/client-only"
+
+// Configure page as server-side only
+export const dynamic = 'force-dynamic'
 
 export default function ScanPage() {
-  const { data: session, status } = useSession()
+  return (
+    <ClientOnly>
+      <ScanPageContent />
+    </ClientOnly>
+  )
+}
+
+// Main component content moved inside this function
+function ScanPageContent() {
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      // Handle redirect on client-side only
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login'
+      }
+    }
+  })
   const router = useRouter()
   const [scanning, setScanning] = useState(false)
   const [scanResult, setScanResult] = useState<null | {
