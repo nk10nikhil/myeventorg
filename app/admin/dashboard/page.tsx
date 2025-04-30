@@ -14,20 +14,22 @@ import AdminLayout from "@/components/admin-layout"
 import { DashboardStats } from "@/components/dashboard-stats"
 
 export default function AdminDashboardPage() {
-  const { data: session, status } = useSession()
   const router = useRouter()
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push('/login')
+    },
+  })
   const [registrations, setRegistrations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login")
-      return
+    if (status === "authenticated") {
+      fetchRegistrations()
     }
-
-    fetchRegistrations()
-  }, [status, router])
+  }, [status])
 
   const fetchRegistrations = async () => {
     try {
@@ -92,6 +94,11 @@ export default function AdminDashboardPage() {
         <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     )
+  }
+
+  // Don't render the full UI until we're authenticated
+  if (status !== "authenticated") {
+    return null
   }
 
   return (
