@@ -59,7 +59,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
-                    <span>Tech Convention Center, Bangalore</span>
+                    <span>Tech Convention Center, Delhi</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4" />

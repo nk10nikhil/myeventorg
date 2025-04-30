@@ -3,9 +3,10 @@ import './globals.css'
 import AuthProvider from '@/components/session-provider'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'My Event Org',
+  description: 'Event Management System',
+  generator: 'nk10nikhil',
+  keywords: 'event, management, tech, conference',
 }
 
 export default function RootLayout({
