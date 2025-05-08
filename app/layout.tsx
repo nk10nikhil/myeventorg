@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: 'Event Management System',
   generator: 'nk10nikhil',
   keywords: 'event, management, tech, conference',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({

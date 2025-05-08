@@ -16,7 +16,9 @@ import {
   Bell,
   Sun,
   Moon,
-  HelpCircle
+  HelpCircle,
+  Menu,
+  X
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useTheme } from "next-themes"
@@ -35,6 +37,12 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip"
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet"
 
 interface AdminLayoutProps {
   children: ReactNode
@@ -45,6 +53,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [notifications, setNotifications] = useState(3)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Wait for component to mount to access theme
   useEffect(() => {
@@ -60,8 +69,52 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return { animationDelay: `${index * 0.05}s` };
   };
 
+  // Sidebar navigation items - defined once to reuse in both desktop and mobile views
+  const navigationItems = [
+    {
+      href: "/admin/dashboard",
+      label: "Dashboard",
+      icon: <BarChart3 className="h-4 w-4" />,
+      delay: 0
+    },
+    {
+      href: "/admin/scan",
+      label: "Scan QR",
+      icon: <QrCode className="h-4 w-4" />,
+      delay: 1
+    },
+    {
+      href: "/admin/registrations",
+      label: "Registrations",
+      icon: <Users className="h-4 w-4" />,
+      delay: 2
+    },
+    {
+      href: "/admin/settings",
+      label: "Settings",
+      icon: <Settings className="h-4 w-4" />,
+      delay: 3
+    }
+  ];
+
+  const renderNavItem = (item: any, isMobile: boolean = false) => (
+    <div className={`${!isMobile ? "animate-slide-in-left" : ""}`} style={!isMobile ? getAnimationDelay(item.delay) : undefined}>
+      <Link href={item.href}>
+        <Button
+          variant={isActive(item.href) ? "secondary" : "ghost"}
+          className={`w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium ${isMobile ? "h-12" : ""}`}
+          onClick={() => isMobile && setMobileMenuOpen(false)}
+        >
+          <span className="mr-2">{item.icon}</span>
+          {item.label}
+        </Button>
+      </Link>
+    </div>
+  );
+
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen flex-col md:flex-row">
+      {/* Desktop Sidebar */}
       <aside className="hidden w-64 border-r bg-sidebar-background text-sidebar-foreground md:block">
         <div className="flex h-16 items-center border-b border-sidebar-border px-4">
           <Link href="/admin/dashboard" className="flex items-center gap-2 font-semibold">
@@ -76,53 +129,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </Link>
         </div>
         <nav className="flex flex-col gap-1 p-4">
-          <div className="animate-slide-in-left" style={getAnimationDelay(0)}>
-            <Link href="/admin/dashboard">
-              <Button
-                variant={isActive("/admin/dashboard") ? "secondary" : "ghost"}
-                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium"
-              >
-                <BarChart3 className="mr-2 h-4 w-4" />
-                Dashboard
-              </Button>
-            </Link>
-          </div>
-
-          <div className="animate-slide-in-left" style={getAnimationDelay(1)}>
-            <Link href="/admin/scan">
-              <Button
-                variant={isActive("/admin/scan") ? "secondary" : "ghost"}
-                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium"
-              >
-                <QrCode className="mr-2 h-4 w-4" />
-                Scan QR
-              </Button>
-            </Link>
-          </div>
-
-          <div className="animate-slide-in-left" style={getAnimationDelay(2)}>
-            <Link href="/admin/registrations">
-              <Button
-                variant={isActive("/admin/registrations") ? "secondary" : "ghost"}
-                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium"
-              >
-                <Users className="mr-2 h-4 w-4" />
-                Registrations
-              </Button>
-            </Link>
-          </div>
-
-          <div className="animate-slide-in-left" style={getAnimationDelay(3)}>
-            <Link href="/admin/settings">
-              <Button
-                variant={isActive("/admin/settings") ? "secondary" : "ghost"}
-                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium"
-              >
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </Button>
-            </Link>
-          </div>
+          {navigationItems.map(item => renderNavItem(item))}
 
           <div className="mt-auto pt-4 animate-slide-in-left" style={getAnimationDelay(4)}>
             <Button
@@ -149,9 +156,68 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
       </aside>
 
+      {/* Mobile Sidebar (Sheet/Drawer) */}
+      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+        <SheetContent side="left" className="w-[80%] max-w-[280px] p-0 border-r bg-sidebar-background text-sidebar-foreground">
+          <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
+            <Link href="/admin/dashboard" className="flex items-center gap-2 font-semibold">
+              <Image
+                src="/techfest-logo.svg"
+                alt="TechFest Logo"
+                width={28}
+                height={28}
+                className="h-7 w-7"
+              />
+              <span className="text-xl font-bold">TechFest Admin</span>
+            </Link>
+            <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </SheetClose>
+          </div>
+          <nav className="flex flex-col gap-1 p-4">
+            {navigationItems.map(item => renderNavItem(item, true))}
+
+            <div className="mt-auto pt-4">
+              <Button
+                variant="ghost"
+                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium h-12"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  signOut({ callbackUrl: "/" });
+                }}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            </div>
+          </nav>
+
+          {/* Help section for mobile */}
+          <div className="p-4 mt-4 bg-sidebar-accent/30 mx-4 rounded-lg border border-sidebar-border">
+            <div className="flex items-center gap-2 mb-2">
+              <HelpCircle className="h-4 w-4 text-sidebar-foreground" />
+              <span className="text-sm font-medium text-sidebar-foreground">Need Help?</span>
+            </div>
+            <p className="text-xs mb-2 text-sidebar-foreground/80">Check our documentation or contact support.</p>
+            <Button variant="outline" size="sm" className="w-full text-xs bg-sidebar-background/70 text-sidebar-foreground border-sidebar-border hover:bg-sidebar-accent">
+              View Documentation
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
       <div className="flex flex-1 flex-col">
         <header className="flex h-16 items-center justify-between border-b px-4 md:px-6">
           <div className="flex items-center gap-2">
+            {/* Mobile menu trigger */}
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="ghost" size="icon" className="mr-2">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </SheetTrigger>
+
             <Link href="/" className="lg:hidden">
               <Button variant="ghost" size="icon" className="mr-2">
                 <Home className="h-5 w-5" />
@@ -166,7 +232,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {/* Theme toggle */}
             {mounted && (
               <TooltipProvider>

@@ -253,14 +253,14 @@ function ScanPageContent() {
 
   return (
     <AdminLayout>
-      <div className="container py-6">
+      <div className="container py-6 px-4 sm:px-6">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-bold tracking-tight animate-fade-in">QR Code Scanner</h1>
-            <p className="text-muted-foreground animate-fade-in">Scan attendee QR codes to check them in for the event.</p>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight animate-fade-in">QR Code Scanner</h1>
+            <p className="text-sm md:text-base text-muted-foreground animate-fade-in">Scan attendee QR codes to check them in for the event.</p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2">
             <Card className="animate-slide-in-left">
               <CardHeader>
                 <CardTitle>Scanner</CardTitle>
@@ -284,7 +284,7 @@ function ScanPageContent() {
                 </div>
 
                 <div className="mt-4 flex flex-col space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="flex items-center space-x-2">
                       <Switch
                         id="offline-mode"
@@ -345,19 +345,31 @@ function ScanPageContent() {
                   </Alert>
                 )}
 
-                <div className="w-full flex justify-center gap-4">
+                <div className="w-full flex flex-col sm:flex-row justify-center gap-4">
                   {!scanning ? (
-                    <Button onClick={startScanner} disabled={!scannerReady} className="bg-primary hover:bg-primary/90 relative overflow-hidden">
+                    <Button
+                      onClick={startScanner}
+                      disabled={!scannerReady}
+                      className="bg-primary hover:bg-primary/90 relative overflow-hidden w-full sm:w-auto"
+                    >
                       <span className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                       <Camera className="mr-2 h-4 w-4" />
                       Start Scanner
                     </Button>
                   ) : (
-                    <Button variant="outline" onClick={stopScanner}>
+                    <Button
+                      variant="outline"
+                      onClick={stopScanner}
+                      className="w-full sm:w-auto"
+                    >
                       Stop Scanner
                     </Button>
                   )}
-                  <Button variant="outline" onClick={() => router.push("/admin/dashboard")}>
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push("/admin/dashboard")}
+                    className="w-full sm:w-auto"
+                  >
                     Back to Dashboard
                   </Button>
                 </div>
@@ -376,17 +388,21 @@ function ScanPageContent() {
                       {scanResult.success && scanResult.registration ? (
                         <div className="rounded-lg p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 shadow-sm border border-blue-100 dark:border-blue-900">
                           <h3 className="font-semibold text-lg mb-4 pb-2 border-b">Attendee Information</h3>
-                          <div className="grid grid-cols-3 gap-3 text-sm">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                             <div className="font-medium">Name:</div>
-                            <div className="col-span-2">{scanResult.registration.name}</div>
+                            <div className="col-span-1 sm:col-span-2">{scanResult.registration.name}</div>
+
                             <div className="font-medium">Email:</div>
-                            <div className="col-span-2 truncate">{scanResult.registration.email}</div>
+                            <div className="col-span-1 sm:col-span-2 truncate">{scanResult.registration.email}</div>
+
                             <div className="font-medium">Phone:</div>
-                            <div className="col-span-2">{scanResult.registration.phone}</div>
+                            <div className="col-span-1 sm:col-span-2">{scanResult.registration.phone}</div>
+
                             <div className="font-medium">Registration ID:</div>
-                            <div className="col-span-2 text-xs truncate font-mono">{scanResult.registration.id}</div>
+                            <div className="col-span-1 sm:col-span-2 text-xs truncate font-mono">{scanResult.registration.id}</div>
+
                             <div className="font-medium">Check-in Time:</div>
-                            <div className="col-span-2">{new Date().toLocaleTimeString()}</div>
+                            <div className="col-span-1 sm:col-span-2">{new Date().toLocaleTimeString()}</div>
                           </div>
                         </div>
                       ) : (
@@ -408,9 +424,11 @@ function ScanPageContent() {
               </Card>
 
               <Card className="animate-slide-in-right" style={{ animationDelay: '0.1s' }}>
-                <CardHeader>
-                  <CardTitle>Scanning Instructions</CardTitle>
-                  <CardDescription>Tips for successful scanning.</CardDescription>
+                <CardHeader className="sm:flex-row sm:items-center">
+                  <div>
+                    <CardTitle>Scanning Instructions</CardTitle>
+                    <CardDescription>Tips for successful scanning.</CardDescription>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
