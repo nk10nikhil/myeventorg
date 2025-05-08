@@ -127,7 +127,7 @@ export default function RegisterPage() {
                       <FormItem>
                         <FormLabel>Full Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="John Doe" {...field} className="transition-all duration-200 focus:ring-2 focus:ring-primary/20" />
+                          <Input placeholder="Your Name" {...field} className="transition-all duration-200 focus:ring-2 focus:ring-primary/20" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -140,7 +140,7 @@ export default function RegisterPage() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="john.doe@example.com" {...field} className="transition-all duration-200 focus:ring-2 focus:ring-primary/20" />
+                          <Input placeholder="email@example.com" {...field} className="transition-all duration-200 focus:ring-2 focus:ring-primary/20" />
                         </FormControl>
                         <FormDescription>
                           We&apos;ll send your ticket to this email
@@ -156,7 +156,7 @@ export default function RegisterPage() {
                       <FormItem>
                         <FormLabel>Phone Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="9876543210" {...field} className="transition-all duration-200 focus:ring-2 focus:ring-primary/20" />
+                          <Input placeholder="7777***666" {...field} className="transition-all duration-200 focus:ring-2 focus:ring-primary/20" />
                         </FormControl>
                         <FormDescription>
                           For verification and event updates via SMS
