@@ -40,7 +40,6 @@ import {
 import {
   Sheet,
   SheetContent,
-  SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet"
 
@@ -98,7 +97,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   ];
 
   const renderNavItem = (item: any, isMobile: boolean = false) => (
-    <div className={`${!isMobile ? "animate-slide-in-left" : ""}`} style={!isMobile ? getAnimationDelay(item.delay) : undefined}>
+    <div className={`${!isMobile ? "animate-slide-in-left" : ""}`} style={!isMobile ? getAnimationDelay(item.delay) : undefined} key={item.href}>
       <Link href={item.href}>
         <Button
           variant={isActive(item.href) ? "secondary" : "ghost"}
@@ -210,13 +209,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <div className="flex flex-1 flex-col">
         <header className="flex h-16 items-center justify-between border-b px-4 md:px-6">
           <div className="flex items-center gap-2">
-            {/* Mobile menu trigger */}
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon" className="mr-2">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </SheetTrigger>
+            {/* Mobile menu trigger - moved inside the Sheet component */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="mr-2 md:hidden"
+              onClick={() => setMobileMenuOpen(true)}
+            >
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Open menu</span>
+            </Button>
 
             <Link href="/" className="lg:hidden">
               <Button variant="ghost" size="icon" className="mr-2">
