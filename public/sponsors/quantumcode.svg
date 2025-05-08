@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="60" viewBox="0 0 180 60">
+  <rect width="180" height="60" fill="none"/>
+  <circle cx="70" cy="30" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <circle cx="90" cy="30" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <circle cx="110" cy="30" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="90" y="33" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle" fill="currentColor">Q|C</text>
+  <text x="90" y="48" font-family="Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="currentColor">QUANTUM CODE</text>
+</svg>

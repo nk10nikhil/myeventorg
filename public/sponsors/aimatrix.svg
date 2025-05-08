@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="60" viewBox="0 0 180 60">
+  <rect width="180" height="60" fill="none"/>
+  <circle cx="60" cy="30" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="90" cy="30" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="120" cy="30" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+  <line x1="68" y1="30" x2="82" y2="30" stroke="currentColor" stroke-width="2"/>
+  <line x1="98" y1="30" x2="112" y2="30" stroke="currentColor" stroke-width="2"/>
+  <line x1="60" y1="38" x2="120" y2="38" stroke="currentColor" stroke-width="1" stroke-dasharray="2,2"/>
+  <text x="90" y="50" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="currentColor">AIMatrix</text>
+</svg>

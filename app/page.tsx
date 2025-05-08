@@ -18,10 +18,10 @@ export default function Home() {
   })
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  // Calculate time until event (May 15, 2025)
+  // Calculate time until event (July 15, 2025)
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const eventDate = new Date('May 15, 2025').getTime();
+      const eventDate = new Date('July 15, 2025').getTime();
       const now = new Date().getTime();
       const difference = eventDate - now;
 
@@ -166,14 +166,19 @@ export default function Home() {
                     </Link>
 
                     <div className="flex gap-4 pt-4 justify-center">
-                      {['twitter', 'facebook', 'instagram', 'linkedin'].map((social) => (
+                      {[
+                        { name: 'twitter', icon: '/icons/social/twitter.svg' },
+                        { name: 'facebook', icon: '/icons/social/facebook.svg' },
+                        { name: 'instagram', icon: '/icons/social/instagram.svg' },
+                        { name: 'linkedin', icon: '/icons/social/linkedin.svg' }
+                      ].map((social) => (
                         <Link
-                          key={social}
+                          key={social.name}
                           href="#"
                           className="flex h-9 w-9 items-center justify-center rounded-full border border-muted-foreground/20 text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors duration-200"
                         >
-                          <span className="sr-only">{social}</span>
-                          <div className="h-4 w-4" />
+                          <span className="sr-only">{social.name}</span>
+                          <Image src={social.icon} alt={social.name} width={16} height={16} />
                         </Link>
                       ))}
                     </div>
@@ -186,13 +191,14 @@ export default function Home() {
       </header>
 
       <main className="flex-1">
+
         <section className="w-full py-12 md:py-20 lg:py-28 bg-muted relative overflow-hidden">
           <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,rgba(var(--primary),0.15),transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(var(--secondary),0.15),transparent_50%)]"></div>
           <div className="container px-4 md:px-6 relative z-10">
             <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
               <div className="flex flex-col justify-center space-y-4">
                 <div className="inline-block rounded-lg bg-muted-foreground/10 px-3 py-1 text-sm">
-                  <span className="font-medium">May 15-17, 2025</span>
+                  <span className="font-medium">July 15-17, 2025</span>
                 </div>
                 <div className="space-y-2">
                   <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent animate-fade-in">
@@ -218,7 +224,7 @@ export default function Home() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                   <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm p-3 rounded-lg border border-border/40">
                     <Calendar className="w-5 h-5 text-primary" />
-                    <span className="text-sm">May 15-17, 2025</span>
+                    <span className="text-sm">July 15-17, 2025</span>
                   </div>
                   <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm p-3 rounded-lg border border-border/40">
                     <MapPin className="w-5 h-5 text-primary" />
@@ -312,22 +318,22 @@ export default function Home() {
             <div className="mx-auto grid max-w-5xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 py-12">
               {[
                 {
-                  name: "Dr. Aisha Patel",
+                  name: "Dr. Priya Sharma",
                   role: "AI Research Director, TechCorp",
                   bio: "Leading AI researcher with groundbreaking work in machine learning and neural networks.",
-                  image: "/speaker.jpg"
+                  image: "/speakers/priya_sharma.jpg"
                 },
                 {
-                  name: "James Wilson",
+                  name: "Rahul Verma",
                   role: "CTO, Future Systems",
                   bio: "Pioneering software architect revolutionizing cloud infrastructure and distributed systems.",
-                  image: "/speaker.jpg"
+                  image: "/speakers/rahul_verma.jpg"
                 },
                 {
-                  name: "Maria Rodriguez",
+                  name: "Aishwarya Patel",
                   role: "Blockchain Specialist",
                   bio: "Web3 innovator developing solutions for decentralized finance and smart contracts.",
-                  image: "/speaker.jpg"
+                  image: "/speakers/aishwarya_patel.jpg"
                 }
               ].map((speaker, index) => (
                 <div
@@ -389,41 +395,47 @@ export default function Home() {
                 {
                   title: "Keynote Presentations",
                   description: "Hear from industry leaders and innovators about the future of technology.",
-                  icon: "presentation"
+                  icon: "/icons/presentation.svg"
                 },
                 {
                   title: "Interactive Workshops",
                   description: "Hands-on sessions to learn new skills and technologies from experts.",
-                  icon: "workshop"
+                  icon: "/icons/workshop.svg"
                 },
                 {
                   title: "Networking Sessions",
                   description: "Connect with peers, potential employers, and collaborators in the tech industry.",
-                  icon: "networking"
+                  icon: "/icons/networking.svg"
                 },
                 {
                   title: "Product Showcases",
                   description: "Experience the latest tech products and innovations from leading companies.",
-                  icon: "product"
+                  icon: "/icons/product.svg"
                 },
                 {
                   title: "Hackathon Challenges",
                   description: "Compete in coding challenges with prizes for the most innovative solutions.",
-                  icon: "hackathon"
+                  icon: "/icons/hackathon.svg"
                 },
                 {
                   title: "Career Fair",
                   description: "Meet with recruiters from top tech companies hiring for various positions.",
-                  icon: "career"
+                  icon: "/icons/career.svg"
                 }
               ].map((highlight, index) => (
                 <div
                   key={index}
-                  className="flex flex-col items-start space-y-3 rounded-xl border border-border/40 bg-background/80 backdrop-blur-sm p-6 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300"
+                  className="flex flex-col items-start space-y-3 rounded-xl border border-border/40 bg-background/80 backdrop-blur-sm p-6 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300 animate-fade-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <div className="h-6 w-6" />
+                    <Image
+                      src={highlight.icon}
+                      alt={highlight.title}
+                      width={24}
+                      height={24}
+                      className="text-primary"
+                    />
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-xl font-bold">{highlight.title}</h3>
@@ -461,16 +473,27 @@ export default function Home() {
             </div>
 
             <div className="mx-auto mt-10 grid max-w-5xl grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 lg:gap-8 py-8">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((sponsor) => (
+              {[
+                { name: "TechCorp", logo: "/sponsors/techcorp.svg" },
+                { name: "Cloudify", logo: "/sponsors/cloudify.svg" },
+                { name: "DataWave", logo: "/sponsors/datawave.svg" },
+                { name: "AIMatrix", logo: "/sponsors/aimatrix.svg" },
+                { name: "SecureBlock", logo: "/sponsors/secureblock.svg" },
+                { name: "NexusTech", logo: "/sponsors/nexustech.svg" },
+                { name: "DevForge", logo: "/sponsors/devforge.svg" },
+                { name: "QuantumCode", logo: "/sponsors/quantumcode.svg" }
+              ].map((sponsor, index) => (
                 <div
-                  key={sponsor}
-                  className="flex items-center justify-center p-4 grayscale opacity-70 transition-all duration-300 hover:grayscale-0 hover:opacity-100 hover:scale-105 bg-background/60 backdrop-blur-sm rounded-lg border border-border/30 shadow-sm hover:shadow-md hover:border-primary/20"
+                  key={index}
+                  className="flex items-center justify-center p-4 grayscale opacity-70 transition-all duration-300 hover:grayscale-0 hover:opacity-100 hover:scale-105 bg-background/60 backdrop-blur-sm rounded-lg border border-border/30 shadow-sm hover:shadow-md hover:border-primary/20 dark:bg-white"
                 >
-                  <div className="relative h-12 w-28 md:h-16 md:w-36">
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-200/50 to-gray-300/50 dark:from-gray-700/50 dark:to-gray-800/50 rounded-md"></div>
-                    <div className="flex items-center justify-center h-full">
-                      <span className="text-muted-foreground text-xs md:text-sm font-medium">Sponsor {sponsor}</span>
-                    </div>
+                  <div className="relative h-12 w-36 md:h-16 md:w-40">
+                    <Image
+                      src={sponsor.logo}
+                      alt={`${sponsor.name} logo`}
+                      fill
+                      className="object-contain"
+                    />
                   </div>
                 </div>
               ))}
@@ -508,28 +531,28 @@ export default function Home() {
             <div className="mx-auto grid max-w-5xl grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 py-12">
               {[
                 {
-                  name: "Sarah Johnson",
-                  role: "Software Engineer",
+                  name: "Neha Sharma",
+                  role: "Software Engineer, InfoTech",
                   testimonial: "TechFest was an incredible experience! The workshops were informative and the networking opportunities were invaluable. Can't wait for next year!",
-                  image: "/placeholder-user.jpg"
+                  image: "/testimonials/neha_sharma.jpg"
                 },
                 {
-                  name: "Michael Chen",
-                  role: "Product Manager",
+                  name: "Ankit Gupta",
+                  role: "Product Manager, TechSolutions",
                   testimonial: "The speakers were world-class and I learned so much that I could immediately apply to my work. The organization was flawless!",
-                  image: "/placeholder-user.jpg"
+                  image: "/testimonials/ankit_gupta.jpg"
                 },
                 {
-                  name: "Priya Sharma",
-                  role: "Data Scientist",
+                  name: "Meera Verma",
+                  role: "Data Scientist, Analytics India",
                   testimonial: "As someone new to the industry, TechFest provided me with insights and connections that have accelerated my career. Highly recommended!",
-                  image: "/placeholder-user.jpg"
+                  image: "/testimonials/meera_verma.jpg"
                 },
                 {
-                  name: "Alex Rodriguez",
-                  role: "CTO, Startup Inc.",
+                  name: "Raj Patel",
+                  role: "CTO, InnovateNow",
                   testimonial: "We found amazing talent at TechFest last year. The caliber of attendees and the quality of conversations made it worth every penny.",
-                  image: "/placeholder-user.jpg"
+                  image: "/testimonials/raj_patel.jpg"
                 }
               ].map((testimonial, index) => (
                 <div
@@ -560,7 +583,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
       </main>
+
       <footer className="border-t bg-muted/20 relative overflow-hidden">
         <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top,rgba(var(--primary),0.03),transparent_50%)]"></div>
         <div className="container px-4 py-10 md:py-16 md:px-6 relative z-10">
@@ -574,15 +599,19 @@ export default function Home() {
                 The premier tech event bringing together innovators, developers, and industry leaders from around the world.
               </p>
               <div className="flex gap-4">
-                {/* Social Media Links */}
-                {['twitter', 'facebook', 'instagram', 'linkedin'].map((social) => (
+                {[
+                  { name: 'twitter', icon: '/icons/social/twitter.svg' },
+                  { name: 'facebook', icon: '/icons/social/facebook.svg' },
+                  { name: 'instagram', icon: '/icons/social/instagram.svg' },
+                  { name: 'linkedin', icon: '/icons/social/linkedin.svg' }
+                ].map((social) => (
                   <Link
-                    key={social}
+                    key={social.name}
                     href="#"
                     className="flex h-9 w-9 items-center justify-center rounded-full border border-muted-foreground/20 text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors duration-200"
                   >
-                    <span className="sr-only">{social}</span>
-                    <div className="h-4 w-4" />
+                    <span className="sr-only">{social.name}</span>
+                    <Image src={social.icon} alt={social.name} width={16} height={16} />
                   </Link>
                 ))}
               </div>
@@ -607,15 +636,15 @@ export default function Home() {
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-primary mt-0.5" />
-                  <span>Tech Convention Center<br />123 Tech Park, Delhi</span>
+                  <span>Delhi, India</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="h-4 w-4 text-primary" />
-                  <span>info@techfest2025.com</span>
+                  <span>nk10nikhil@gmail.com</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="h-4 w-4 text-primary" />
-                  <span>+91 123-456-7890</span>
+                  <span>+91 7777048666</span>
                 </li>
               </ul>
             </div>

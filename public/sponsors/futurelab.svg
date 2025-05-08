@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="60" viewBox="0 0 180 60">
+  <rect width="180" height="60" fill="none"/>
+  <circle cx="90" cy="25" r="12" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <path d="M78,40h24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M90,37v-24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="90" y="50" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="currentColor">FUTURE LAB</text>
+</svg>

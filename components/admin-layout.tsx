@@ -229,7 +229,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
             <div className="text-sm breadcrumbs hidden md:block">
               <span className="text-muted-foreground">
-                Admin / {pathname.split('/').pop()?.charAt(0).toUpperCase() + pathname.split('/').pop()?.slice(1)}
+                {(() => {
+                  const lastSegment = pathname.split('/').pop();
+                  return (
+                    "Admin / " +
+                    (lastSegment
+                      ? lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1)
+                      : "")
+                  );
+                })()}
               </span>
             </div>
           </div>
