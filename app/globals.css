@@ -50,14 +50,15 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
-    --sidebar-background: 221.2 83.2% 53.3%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-muted: 210 40% 90%;
-    --sidebar-primary: 210 40% 98%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 35%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 60%;
+    /* Updated sidebar colors for light mode */
+    --sidebar-background: 223 25% 95%;
+    --sidebar-foreground: 224 71% 4%;
+    --sidebar-muted: 220 14% 50%;
+    --sidebar-primary: 221.2 83.2% 53.3%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 220 14% 90%;
+    --sidebar-accent-foreground: 220 14% 20%;
+    --sidebar-border: 220 13% 85%;
   }
 
   .dark {

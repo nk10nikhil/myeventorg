@@ -70,7 +70,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               alt="TechFest Logo"
               width={28}
               height={28}
-              className="h-7 w-7 text-sidebar-foreground"
+              className="h-7 w-7"
             />
             <span className="text-xl font-bold">TechFest Admin</span>
           </Link>
@@ -80,7 +80,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <Link href="/admin/dashboard">
               <Button
                 variant={isActive("/admin/dashboard") ? "secondary" : "ghost"}
-                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200"
+                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium"
               >
                 <BarChart3 className="mr-2 h-4 w-4" />
                 Dashboard
@@ -92,7 +92,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <Link href="/admin/scan">
               <Button
                 variant={isActive("/admin/scan") ? "secondary" : "ghost"}
-                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200"
+                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium"
               >
                 <QrCode className="mr-2 h-4 w-4" />
                 Scan QR
@@ -104,7 +104,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <Link href="/admin/registrations">
               <Button
                 variant={isActive("/admin/registrations") ? "secondary" : "ghost"}
-                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200"
+                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium"
               >
                 <Users className="mr-2 h-4 w-4" />
                 Registrations
@@ -116,7 +116,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <Link href="/admin/settings">
               <Button
                 variant={isActive("/admin/settings") ? "secondary" : "ghost"}
-                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200"
+                className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium"
               >
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
@@ -127,7 +127,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="mt-auto pt-4 animate-slide-in-left" style={getAnimationDelay(4)}>
             <Button
               variant="ghost"
-              className="w-full justify-start text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200"
+              className="w-full justify-start hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 font-medium"
               onClick={() => signOut({ callbackUrl: "/" })}
             >
               <LogOut className="mr-2 h-4 w-4" />
@@ -136,14 +136,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
         </nav>
 
-        {/* Help section */}
-        <div className="p-4 mt-4 bg-sidebar-accent/20 mx-4 rounded-lg">
+        {/* Help section with improved contrast */}
+        <div className="p-4 mt-4 bg-sidebar-accent/30 mx-4 rounded-lg border border-sidebar-border">
           <div className="flex items-center gap-2 mb-2">
-            <HelpCircle className="h-4 w-4" />
-            <span className="text-sm font-medium">Need Help?</span>
+            <HelpCircle className="h-4 w-4 text-sidebar-foreground" />
+            <span className="text-sm font-medium text-sidebar-foreground">Need Help?</span>
           </div>
-          <p className="text-xs text-sidebar-muted mb-2">Check our documentation or contact support if you're having issues.</p>
-          <Button variant="outline" size="sm" className="w-full text-xs bg-sidebar-accent/30 border-sidebar-border">
+          <p className="text-xs mb-2 text-sidebar-foreground/80">Check our documentation or contact support if you're having issues.</p>
+          <Button variant="outline" size="sm" className="w-full text-xs bg-sidebar-background/70 text-sidebar-foreground border-sidebar-border hover:bg-sidebar-accent">
             View Documentation
           </Button>
         </div>
