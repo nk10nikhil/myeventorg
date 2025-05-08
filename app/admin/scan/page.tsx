@@ -6,12 +6,13 @@ import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
-import { AlertCircle, Camera, CheckCircle, Loader2, RefreshCw, Smartphone, WifiOff } from "lucide-react"
+import { AlertCircle, Camera, CheckCircle, Loader2, RefreshCw, Smartphone, WifiOff, Volume2, VolumeX } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import AdminLayout from "@/components/admin-layout"
 import ClientOnly from "@/components/client-only"
+import confetti from 'canvas-confetti'
 
 // Configure page as server-side only
 export const dynamic = 'force-dynamic'
@@ -24,8 +25,9 @@ export default function ScanPage() {
   )
 }
 
-// Main component content moved inside this function
+// Main component content
 function ScanPageContent() {
+  const router = useRouter()
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -33,245 +35,207 @@ function ScanPageContent() {
       if (typeof window !== 'undefined') {
         window.location.href = '/login'
       }
-    }
+    },
   })
-  const router = useRouter()
+
   const [scanning, setScanning] = useState(false)
-  const [scanResult, setScanResult] = useState<null | {
-    success: boolean
-    message: string
-    registration?: any
-  }>(null)
-  const [QrScanner, setQrScanner] = useState<any>(null)
-  const [scanner, setScanner] = useState<any>(null)
-  const [cameras, setCameras] = useState<{ id: string; label: string }[]>([])
-  const [selectedCamera, setSelectedCamera] = useState<string | null>(null)
   const [offlineMode, setOfflineMode] = useState(false)
-  const [isOnline, setIsOnline] = useState(true)
-  const [offlineScans, setOfflineScans] = useState<string[]>([])
+  const [cameraError, setCameraError] = useState(false)
+  const [scanResult, setScanResult] = useState<any>(null)
+  const [QrScanner, setQrScanner] = useState<any>(null)
+  const [sound, setSound] = useState(true)
+  const [isSoundLoaded, setIsSoundLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const qrScannerRef = useRef<any>(null)
+  const successSoundRef = useRef<HTMLAudioElement | null>(null)
+  const errorSoundRef = useRef<HTMLAudioElement | null>(null)
+  const offlineScans = useRef<string[]>([])
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login")
-      return
-    }
-
-    // Check if browser is online
-    setIsOnline(navigator.onLine)
-    window.addEventListener("online", () => setIsOnline(true))
-    window.addEventListener("offline", () => setIsOnline(false))
-
-    // Load offline scans from localStorage
-    const savedScans = localStorage.getItem("offlineScans")
-    if (savedScans) {
-      setOfflineScans(JSON.parse(savedScans))
-    }
-
-    // Dynamically import QR scanner library
-    import("qr-scanner").then((module) => {
-      setQrScanner(() => module.default)
-
-      // Get available cameras
-      module.default
-        .listCameras()
-        .then((cameras: any[]) => {
-          setCameras(cameras)
-          if (cameras.length > 0) {
-            setSelectedCamera(cameras[0].id)
-          }
-        })
-        .catch(console.error)
+    import('qr-scanner').then((module) => {
+      setQrScanner(module.default)
     })
 
-    return () => {
-      if (scanner) {
-        scanner.stop()
-      }
-      window.removeEventListener("online", () => setIsOnline(true))
-      window.removeEventListener("offline", () => setIsOnline(false))
-    }
-  }, [status, router, scanner])
+    // Initialize audio elements
+    successSoundRef.current = new Audio('/sounds/success.mp3')
+    errorSoundRef.current = new Audio('/sounds/error.mp3')
+    setIsSoundLoaded(true)
 
-  const startScanner = () => {
-    if (!QrScanner) return
+    return () => {
+      if (qrScannerRef.current) {
+        qrScannerRef.current.destroy()
+      }
+    }
+  }, [])
+
+  const startScanner = async () => {
+    if (!QrScanner || !videoRef.current) return
 
     setScanning(true)
     setScanResult(null)
+    setCameraError(false)
 
-    const videoElement = videoRef.current
+    try {
+      qrScannerRef.current = new QrScanner(
+        videoRef.current,
+        (result: any) => handleScan(result.data),
+        {
+          highlightScanRegion: true,
+          highlightCodeOutline: true,
+          returnDetailedScanResult: true,
+        }
+      )
 
-    if (!videoElement) return
-
-    const qrScanner = new QrScanner(
-      videoElement,
-      async (result) => {
-        // Don't stop scanner immediately to allow continuous scanning
-        await processQrCode(result.data)
-      },
-      {
-        highlightScanRegion: true,
-        highlightCodeOutline: true,
-        preferredCamera: selectedCamera || undefined,
-        maxScansPerSecond: 1, // Limit scan rate to prevent duplicates
-      },
-    )
-
-    setScanner(qrScanner)
-    qrScanner.start().catch((error) => {
-      console.error("Scanner start error:", error)
-      toast({
-        title: "Camera Error",
-        description: "Could not access the camera. Please check permissions.",
-        variant: "destructive",
-      })
-      setScanning(false)
-    })
-  }
-
-  const stopScanner = () => {
-    if (scanner) {
-      scanner.stop()
+      await qrScannerRef.current.start()
+    } catch (error) {
+      console.error('Failed to start scanner:', error)
+      setCameraError(true)
       setScanning(false)
     }
   }
 
-  const processQrCode = async (qrData: string) => {
+  const stopScanner = () => {
+    if (qrScannerRef.current) {
+      qrScannerRef.current.destroy()
+      qrScannerRef.current = null
+    }
+    setScanning(false)
+  }
+
+  const handleScan = async (qrData: string) => {
     try {
-      // Parse QR data - assuming it's a JSON string with regId
-      let regId
-      try {
-        const parsedData = JSON.parse(qrData)
-        regId = parsedData.regId
-      } catch (e) {
-        // If not JSON, try to use the string directly
-        regId = qrData
+      stopScanner()
+      const data = JSON.parse(qrData)
+
+      if (!data.regId || !data.event) {
+        throw new Error('Invalid QR code')
       }
 
-      if (!regId) {
-        throw new Error("Invalid QR code")
-      }
-
-      // Check if we've already scanned this QR code in this session
-      if (scanResult?.registration?.id === regId && scanResult.success) {
-        // Already scanned this QR code successfully in this session
-        return
-      }
-
-      // If offline mode or browser is offline
-      if (offlineMode || !isOnline) {
-        // Check if already scanned offline
-        if (offlineScans.includes(regId)) {
-          setScanResult({
+      if (offlineMode) {
+        // Check if already scanned in offline mode
+        if (offlineScans.current.includes(data.regId)) {
+          handleScanResult({
             success: false,
-            message: "This QR code has already been scanned offline",
+            message: 'This QR code has already been scanned in offline mode',
           })
           return
         }
 
         // Add to offline scans
-        const updatedScans = [...offlineScans, regId]
-        setOfflineScans(updatedScans)
-        localStorage.setItem("offlineScans", JSON.stringify(updatedScans))
+        offlineScans.current.push(data.regId)
 
-        setScanResult({
+        handleScanResult({
           success: true,
-          message: "Offline check-in recorded. Will sync when online.",
+          message: 'Attendee checked in (offline mode)',
           registration: {
-            id: regId,
-            name: "Offline Attendee",
-            email: "Stored locally",
-            phone: "Will sync when online",
+            id: data.regId,
+            name: 'Offline Attendee',
+            email: 'Saved for later sync',
+            phone: 'Saved for later sync',
           },
-        })
-
-        toast({
-          title: "Offline Check-in",
-          description: `Attendee with ID ${regId} has been checked in offline.`,
         })
         return
       }
 
-      // Online mode - verify with server
-      const response = await fetch("/api/admin/scan", {
-        method: "POST",
+      const response = await fetch('/api/admin/scan', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ regId }),
+        body: JSON.stringify({ regId: data.regId }),
       })
 
-      const data = await response.json()
+      const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to process QR code")
+        throw new Error(result.message || 'Failed to process QR code')
       }
 
-      setScanResult({
+      handleScanResult({
         success: true,
-        message: "Check-in successful!",
-        registration: data.registration,
+        message: result.message,
+        registration: result.registration,
       })
 
-      toast({
-        title: "Check-in Successful",
-        description: `${data.registration.name} has been checked in.`,
-      })
     } catch (error) {
-      console.error("QR scan error:", error)
-      setScanResult({
-        success: false,
-        message: error instanceof Error ? error.message : "Invalid QR code",
-      })
+      console.error('Error processing scan:', error)
 
-      toast({
-        title: "Check-in Failed",
-        description: error instanceof Error ? error.message : "Invalid QR code",
-        variant: "destructive",
+      const errorMessage = error instanceof Error ? error.message : 'Failed to process QR code'
+      handleScanResult({
+        success: false,
+        message: errorMessage,
       })
     }
+  }
+
+  const handleScanResult = (result: any) => {
+    setScanResult(result)
+
+    // Play appropriate sound if enabled
+    if (sound && isSoundLoaded) {
+      if (result.success) {
+        successSoundRef.current?.play()
+        // Trigger confetti for successful scan
+        triggerConfetti()
+      } else {
+        errorSoundRef.current?.play()
+      }
+    }
+  }
+
+  const triggerConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
   }
 
   const syncOfflineScans = async () => {
-    if (offlineScans.length === 0) return
+    if (offlineScans.current.length === 0) {
+      toast({
+        title: 'No offline scans',
+        description: 'There are no offline scans to sync',
+      })
+      return
+    }
 
     try {
-      const response = await fetch("/api/admin/bulk-scan", {
-        method: "POST",
+      const response = await fetch('/api/admin/bulk-scan', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ regIds: offlineScans }),
+        body: JSON.stringify({ regIds: offlineScans.current }),
       })
 
-      const data = await response.json()
+      const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to sync offline scans")
+        throw new Error(result.message || 'Failed to sync offline scans')
       }
 
-      // Clear offline scans
-      setOfflineScans([])
-      localStorage.removeItem("offlineScans")
-
       toast({
-        title: "Sync Successful",
-        description: `${data.processed} attendees have been synced.`,
+        title: 'Sync Successful',
+        description: `Processed: ${result.processed}, Failed: ${result.failed}, Already Scanned: ${result.alreadyScanned}, Not Paid: ${result.notPaid}, Not Found: ${result.notFound}`,
       })
+
+      // Clear offline scans
+      offlineScans.current = []
     } catch (error) {
-      console.error("Sync error:", error)
+      console.error('Error syncing offline scans:', error)
       toast({
-        title: "Sync Failed",
-        description: error instanceof Error ? error.message : "Failed to sync offline scans",
-        variant: "destructive",
+        title: 'Sync Failed',
+        description: error instanceof Error ? error.message : 'Failed to sync offline scans',
+        variant: 'destructive',
       })
     }
   }
 
-  if (status === "loading") {
+  if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin" />
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     )
   }
@@ -279,121 +243,215 @@ function ScanPageContent() {
   return (
     <AdminLayout>
       <div className="container py-6">
-        <div className="flex flex-col gap-6 max-w-2xl mx-auto">
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-bold tracking-tight">QR Code Scanner</h1>
-            <p className="text-muted-foreground">Scan attendee QR codes to check them in to the event.</p>
+            <h1 className="text-3xl font-bold tracking-tight animate-fade-in">QR Code Scanner</h1>
+            <p className="text-muted-foreground animate-fade-in">Scan attendee QR codes to check them in for the event.</p>
           </div>
 
-          {!isOnline && (
-            <Alert variant="warning" className="mb-4">
-              <WifiOff className="h-4 w-4" />
-              <AlertTitle>You are offline</AlertTitle>
-              <AlertDescription>
-                Scanner will work in offline mode. Scans will be synced when you're back online.
-              </AlertDescription>
-            </Alert>
-          )}
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card className="animate-slide-in-left">
+              <CardHeader>
+                <CardTitle>Scanner</CardTitle>
+                <CardDescription>Scan the QR code from the attendee's ticket.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="aspect-video overflow-hidden rounded-lg border relative">
+                  {scanning ? (
+                    <video
+                      ref={videoRef}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/20">
+                      <Camera className="h-10 w-10 mb-4 text-muted-foreground" />
+                      <p className="text-muted-foreground text-sm">
+                        {cameraError ? 'Camera access denied or device not available' : 'Camera is currently off'}
+                      </p>
+                    </div>
+                  )}
+                </div>
 
-          {offlineScans.length > 0 && isOnline && (
-            <Alert variant="info" className="mb-4">
-              <Smartphone className="h-4 w-4" />
-              <AlertTitle>Offline scans available</AlertTitle>
-              <AlertDescription className="flex justify-between items-center">
-                <span>You have {offlineScans.length} offline scans that need to be synced.</span>
-                <Button size="sm" onClick={syncOfflineScans}>
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  Sync Now
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
+                <div className="mt-4 flex flex-col space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="offline-mode"
+                        checked={offlineMode}
+                        onCheckedChange={setOfflineMode}
+                      />
+                      <Label htmlFor="offline-mode" className="text-sm font-medium flex items-center">
+                        {offlineMode ? (
+                          <WifiOff className="mr-1 h-4 w-4 text-amber-500" />
+                        ) : (
+                          <Smartphone className="mr-1 h-4 w-4 text-green-500" />
+                        )}
+                        Offline Mode {offlineMode && <span className="text-xs text-muted-foreground ml-1">(Scans: {offlineScans.current.length})</span>}
+                      </Label>
+                    </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Scan QR Code</CardTitle>
-              <CardDescription>Position the QR code within the camera view to scan.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center">
-              <div className="relative w-full max-w-sm aspect-square bg-muted rounded-lg overflow-hidden mb-4">
-                <video ref={videoRef} className="w-full h-full object-cover" muted playsInline></video>
-                {!scanning && !scanResult && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-background/80">
-                    <p className="text-muted-foreground">Camera inactive</p>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="sound-toggle"
+                        checked={sound}
+                        onCheckedChange={setSound}
+                      />
+                      <Label htmlFor="sound-toggle" className="text-sm font-medium flex items-center">
+                        {sound ? (
+                          <Volume2 className="mr-1 h-4 w-4 text-green-500" />
+                        ) : (
+                          <VolumeX className="mr-1 h-4 w-4 text-amber-500" />
+                        )}
+                        Sound
+                      </Label>
+                    </div>
                   </div>
-                )}
-              </div>
 
-              {cameras.length > 1 && (
-                <div className="w-full mb-4">
-                  <label className="block text-sm font-medium mb-2">Select Camera</label>
-                  <select
-                    className="w-full p-2 border rounded-md"
-                    value={selectedCamera || ""}
-                    onChange={(e) => {
-                      setSelectedCamera(e.target.value)
-                      if (scanner) {
-                        scanner.setCamera(e.target.value).catch(console.error)
-                      }
-                    }}
-                    disabled={scanning}
+                  {offlineMode && offlineScans.current.length > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={syncOfflineScans}
+                      className="w-full"
+                    >
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Sync {offlineScans.current.length} Offline Scan{offlineScans.current.length > 1 ? 's' : ''}
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-4">
+                {scanResult && (
+                  <Alert
+                    variant={scanResult.success ? 'default' : 'destructive'}
+                    className={`w-full ${scanResult.success ? 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-900' : 'bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-900'} transition-all duration-300 animate-bounce-in`}
                   >
-                    {cameras.map((camera) => (
-                      <option key={camera.id} value={camera.id}>
-                        {camera.label || `Camera ${camera.id}`}
-                      </option>
-                    ))}
-                  </select>
+                    <div className="flex items-center gap-2">
+                      {scanResult.success ? <CheckCircle className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4" />}
+                      <AlertTitle>{scanResult.success ? "Success" : "Error"}</AlertTitle>
+                    </div>
+                    <AlertDescription className="mt-2">{scanResult.message}</AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="w-full flex justify-center gap-4">
+                  {!scanning ? (
+                    <Button onClick={startScanner} disabled={!QrScanner} className="bg-primary hover:bg-primary/90 relative overflow-hidden">
+                      <span className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                      <Camera className="mr-2 h-4 w-4" />
+                      Start Scanner
+                    </Button>
+                  ) : (
+                    <Button variant="outline" onClick={stopScanner}>
+                      Stop Scanner
+                    </Button>
+                  )}
+                  <Button variant="outline" onClick={() => router.push("/admin/dashboard")}>
+                    Back to Dashboard
+                  </Button>
                 </div>
-              )}
+              </CardFooter>
+            </Card>
 
-              <div className="flex items-center space-x-2 mb-4 w-full">
-                <Switch id="offline-mode" checked={offlineMode} onCheckedChange={setOfflineMode} disabled={!isOnline} />
-                <Label htmlFor="offline-mode">Enable Offline Mode</Label>
-              </div>
+            <div className="flex flex-col gap-6">
+              <Card className="animate-slide-in-right">
+                <CardHeader>
+                  <CardTitle>Recent Scan</CardTitle>
+                  <CardDescription>Details about the most recent scan.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {scanResult ? (
+                    <>
+                      {scanResult.success && scanResult.registration ? (
+                        <div className="rounded-lg p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 shadow-sm border border-blue-100 dark:border-blue-900">
+                          <h3 className="font-semibold text-lg mb-4 pb-2 border-b">Attendee Information</h3>
+                          <div className="grid grid-cols-3 gap-3 text-sm">
+                            <div className="font-medium">Name:</div>
+                            <div className="col-span-2">{scanResult.registration.name}</div>
+                            <div className="font-medium">Email:</div>
+                            <div className="col-span-2 truncate">{scanResult.registration.email}</div>
+                            <div className="font-medium">Phone:</div>
+                            <div className="col-span-2">{scanResult.registration.phone}</div>
+                            <div className="font-medium">Registration ID:</div>
+                            <div className="col-span-2 text-xs truncate font-mono">{scanResult.registration.id}</div>
+                            <div className="font-medium">Check-in Time:</div>
+                            <div className="col-span-2">{new Date().toLocaleTimeString()}</div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center h-40 text-center">
+                          <AlertCircle className="h-8 w-8 text-destructive mb-2" />
+                          <h3 className="font-medium text-destructive">Scan Error</h3>
+                          <p className="text-sm text-muted-foreground">{scanResult.message}</p>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-40 text-center">
+                      <Camera className="h-8 w-8 text-muted-foreground mb-2" />
+                      <p className="text-muted-foreground">No scans performed yet</p>
+                      <p className="text-xs text-muted-foreground mt-1">Start the scanner and scan a QR code</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-              {scanResult && (
-                <Alert variant={scanResult.success ? "default" : "destructive"} className="mb-4 w-full">
-                  {scanResult.success ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                  <AlertTitle>{scanResult.success ? "Success" : "Error"}</AlertTitle>
-                  <AlertDescription>{scanResult.message}</AlertDescription>
-                </Alert>
-              )}
+              <Card className="animate-slide-in-right" style={{ animationDelay: '0.1s' }}>
+                <CardHeader>
+                  <CardTitle>Scanning Instructions</CardTitle>
+                  <CardDescription>Tips for successful scanning.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        1
+                      </div>
+                      <div>
+                        <h4 className="font-medium">Start the Scanner</h4>
+                        <p className="text-sm text-muted-foreground">Click the "Start Scanner" button to activate your device's camera.</p>
+                      </div>
+                    </div>
 
-              {scanResult && scanResult.success && scanResult.registration && (
-                <div className="w-full p-4 border rounded-lg mb-4">
-                  <h3 className="font-semibold mb-2">Attendee Information</h3>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="font-medium">Name:</div>
-                    <div>{scanResult.registration.name}</div>
-                    <div className="font-medium">Email:</div>
-                    <div>{scanResult.registration.email}</div>
-                    <div className="font-medium">Phone:</div>
-                    <div>{scanResult.registration.phone}</div>
-                    <div className="font-medium">Registration ID:</div>
-                    <div>{scanResult.registration.id}</div>
+                    <div className="flex gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        2
+                      </div>
+                      <div>
+                        <h4 className="font-medium">Position the QR Code</h4>
+                        <p className="text-sm text-muted-foreground">Position the attendee's QR code within the camera view. Keep it steady.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        3
+                      </div>
+                      <div>
+                        <h4 className="font-medium">Verify Success</h4>
+                        <p className="text-sm text-muted-foreground">Check that the attendee details are displayed correctly after scanning.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        4
+                      </div>
+                      <div>
+                        <h4 className="font-medium">Offline Mode (If Needed)</h4>
+                        <p className="text-sm text-muted-foreground">Use offline mode if internet connection is unstable. Sync later when connected.</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="flex justify-center gap-4">
-              {!scanning ? (
-                <Button onClick={startScanner} disabled={!QrScanner}>
-                  <Camera className="mr-2 h-4 w-4" />
-                  Start Scanner
-                </Button>
-              ) : (
-                <Button variant="outline" onClick={stopScanner}>
-                  Stop Scanner
-                </Button>
-              )}
-              <Button variant="outline" onClick={() => router.push("/admin/dashboard")}>
-                Back to Dashboard
-              </Button>
-            </CardFooter>
-          </Card>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Invisible container for confetti */}
+      <div className="confetti-container" />
     </AdminLayout>
   )
 }
