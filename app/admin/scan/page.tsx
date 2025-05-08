@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import AdminLayout from "@/components/admin-layout"
 import ClientOnly from "@/components/client-only"
-import confetti from 'canvas-confetti'
+import confetti from "canvas-confetti"
 
 // Configure page as server-side only
 export const dynamic = 'force-dynamic'
@@ -42,19 +42,30 @@ function ScanPageContent() {
   const [offlineMode, setOfflineMode] = useState(false)
   const [cameraError, setCameraError] = useState(false)
   const [scanResult, setScanResult] = useState<any>(null)
-  const [QrScanner, setQrScanner] = useState<any>(null)
+  const [scannerReady, setScannerReady] = useState(false)
   const [sound, setSound] = useState(true)
   const [isSoundLoaded, setIsSoundLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const qrScannerRef = useRef<any>(null)
+  const QrScannerClassRef = useRef<any>(null)
   const successSoundRef = useRef<HTMLAudioElement | null>(null)
   const errorSoundRef = useRef<HTMLAudioElement | null>(null)
   const offlineScans = useRef<string[]>([])
 
   useEffect(() => {
-    import('qr-scanner').then((module) => {
-      setQrScanner(module.default)
-    })
+    // Load QR scanner dynamically without using useState
+    const loadQrScanner = async () => {
+      try {
+        const QrScannerModule = await import('qr-scanner');
+        QrScannerClassRef.current = QrScannerModule.default;
+        setScannerReady(true);
+      } catch (error) {
+        console.error('Failed to load QR scanner module:', error);
+        setCameraError(true);
+      }
+    };
+
+    loadQrScanner();
 
     // Initialize audio elements
     successSoundRef.current = new Audio('/sounds/success.mp3')
@@ -69,14 +80,14 @@ function ScanPageContent() {
   }, [])
 
   const startScanner = async () => {
-    if (!QrScanner || !videoRef.current) return
+    if (!QrScannerClassRef.current || !videoRef.current) return
 
     setScanning(true)
     setScanResult(null)
     setCameraError(false)
 
     try {
-      qrScannerRef.current = new QrScanner(
+      qrScannerRef.current = new QrScannerClassRef.current(
         videoRef.current,
         (result: any) => handleScan(result.data),
         {
@@ -336,7 +347,7 @@ function ScanPageContent() {
 
                 <div className="w-full flex justify-center gap-4">
                   {!scanning ? (
-                    <Button onClick={startScanner} disabled={!QrScanner} className="bg-primary hover:bg-primary/90 relative overflow-hidden">
+                    <Button onClick={startScanner} disabled={!scannerReady} className="bg-primary hover:bg-primary/90 relative overflow-hidden">
                       <span className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                       <Camera className="mr-2 h-4 w-4" />
                       Start Scanner
