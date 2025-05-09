@@ -175,7 +175,7 @@ export default function Home() {
                         <Link
                           key={social.name}
                           href="#"
-                          className="flex h-9 w-9 items-center justify-center rounded-full border border-muted-foreground/20 text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors duration-200"
+                          className="flex h-9 w-9 items-center justify-center rounded-full border border-muted-foreground/20 text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors duration-200 dark:bg-white"
                         >
                           <span className="sr-only">{social.name}</span>
                           <Image src={social.icon} alt={social.name} width={16} height={16} />
