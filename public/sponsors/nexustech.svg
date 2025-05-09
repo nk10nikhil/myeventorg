@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="60" viewBox="0 0 180 60">
-  <rect width="180" height="60" fill="none"/>
-  <polygon points="90,15 105,25 105,40 90,50 75,40 75,25" fill="none" stroke="currentColor" stroke-width="2"/>
-  <circle cx="90" cy="32" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-  <text x="90" y="55" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="currentColor">NEXUS TECH</text>
-</svg>

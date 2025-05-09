@@ -228,7 +228,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm p-3 rounded-lg border border-border/40">
                     <MapPin className="w-5 h-5 text-primary" />
-                    <span className="text-sm">Delhi, India</span>
+                    <span className="text-sm">GCET, India</span>
                   </div>
                   <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm p-3 rounded-lg border border-border/40">
                     <Users className="w-5 h-5 text-primary" />
@@ -636,14 +636,19 @@ export default function Home() {
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-primary mt-0.5" />
-                  <span>Delhi, India</span>
+                  <span>GCET, India</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="h-4 w-4 text-primary" />
+                  <svg className="h-4 w-4 text-primary" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="M3 7l9 6 9-6" />
+                  </svg>
                   <span>nk10nikhil@gmail.com</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="h-4 w-4 text-primary" />
+                  <svg className="h-4 w-4 text-primary" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path d="M22 16.92V21a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3 5.18 2 2 0 0 1 5 3h4.09a1 1 0 0 1 1 .75l1.13 4.52a1 1 0 0 1-.29 1L9.91 11.09a16 16 0 0 0 6 6l1.82-1.82a1 1 0 0 1 1-.29l4.52 1.13a1 1 0 0 1 .75 1z" />
+                  </svg>
                   <span>+91 7777048666</span>
                 </li>
               </ul>

@@ -208,7 +208,7 @@ export default function RegisterPage() {
                     <CalendarDays className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                     <div>
                       <h4 className="font-medium">Date & Time</h4>
-                      <p className="text-sm text-muted-foreground">June 15-18, 2025 | 9:00 AM - 6:00 PM</p>
+                      <p className="text-sm text-muted-foreground">July 15-18, 2025 | 9:00 AM - 6:00 PM</p>
                     </div>
                   </div>
 
@@ -216,7 +216,7 @@ export default function RegisterPage() {
                     <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                     <div>
                       <h4 className="font-medium">Venue</h4>
-                      <p className="text-sm text-muted-foreground">International Convention Center, Mumbai</p>
+                      <p className="text-sm text-muted-foreground">GCET, Greater Noida, UP</p>
                     </div>
                   </div>
 

@@ -2,6 +2,8 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Calendar, Clock, MapPin, Users } from 'lucide-react';
 
 export const metadata = {
     title: 'Schedule | TechFest 2025',
@@ -20,11 +22,26 @@ export default function SchedulePage() {
                 </p>
             </div>
 
+            <div className="mb-10 flex justify-center space-x-4">
+                <Button variant="outline" className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Add to Calendar
+                </Button>
+                <Button variant="outline" className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Filter by Track
+                </Button>
+                <Button variant="outline" className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    View Venue Map
+                </Button>
+            </div>
+
             <Tabs defaultValue="day1" className="max-w-5xl mx-auto">
                 <TabsList className="grid w-full grid-cols-3 mb-8">
-                    <TabsTrigger value="day1">Day 1 - May 25</TabsTrigger>
-                    <TabsTrigger value="day2">Day 2 - May 26</TabsTrigger>
-                    <TabsTrigger value="day3">Day 3 - May 27</TabsTrigger>
+                    <TabsTrigger value="day1">Day 1 - July 15</TabsTrigger>
+                    <TabsTrigger value="day2">Day 2 - July 16</TabsTrigger>
+                    <TabsTrigger value="day3">Day 3 - July 17</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="day1" className="space-y-6">
@@ -36,7 +53,9 @@ export default function SchedulePage() {
                                 <span>8:00 AM - 9:30 AM</span>
                                 <Badge>Registration & Breakfast</Badge>
                             </CardTitle>
-                            <CardDescription>Main Hall</CardDescription>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Main Hall
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <p>Registration opens. Welcome kits and badges distribution. Networking breakfast.</p>
@@ -49,27 +68,37 @@ export default function SchedulePage() {
                                 <span>10:00 AM - 11:00 AM</span>
                                 <Badge variant="secondary">Keynote</Badge>
                             </CardTitle>
-                            <CardDescription>Main Stage</CardDescription>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Main Stage
+                            </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Opening Keynote: The Future of Technology</h3>
-                            <p className="mb-2">A visionary talk on upcoming tech trends and how they will shape our future.</p>
-                            <p className="text-sm font-medium">Speaker: Aishwarya Patel, CTO at FutureTech</p>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">The Future of Technology: Trends Shaping Our Digital Landscape</p>
+                            <p>Opening keynote by Aishwarya Patel, CTO of FutureTech, exploring the most significant technological trends that will reshape industries in the next decade.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">All Attendees</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>60 minutes</span>
+                            </div>
                         </CardContent>
                     </Card>
 
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex justify-between items-center">
-                                <span>11:30 AM - 12:30 PM</span>
+                                <span>11:15 AM - 12:30 PM</span>
                                 <Badge variant="outline">Panel Discussion</Badge>
                             </CardTitle>
-                            <CardDescription>Innovation Theater</CardDescription>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Hall A
+                            </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">AI Revolution: Opportunities and Challenges</h3>
-                            <p className="mb-2">Industry leaders discuss the impact of AI across different sectors.</p>
-                            <p className="text-sm font-medium">Moderator: Dr. Rajan Kapoor</p>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">AI Revolution: Opportunities and Challenges</p>
+                            <p>Industry experts discuss the current state of AI, ethical considerations, and what the future holds. Moderated by Dr. Rajan Kapoor.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">All Attendees</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>75 minutes</span>
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -79,236 +108,60 @@ export default function SchedulePage() {
                                 <span>12:30 PM - 2:00 PM</span>
                                 <Badge>Lunch Break</Badge>
                             </CardTitle>
-                            <CardDescription>Dining Area</CardDescription>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Food Court
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <p>Networking lunch with exhibitors and speakers.</p>
+                            <p>Networking lunch with themed tables for different industries and interests. Special dietary options available.</p>
                         </CardContent>
                     </Card>
 
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex justify-between items-center">
-                                <span>2:00 PM - 3:30 PM</span>
+                                <span>2:00 PM - 4:00 PM</span>
                                 <Badge variant="destructive">Workshop</Badge>
                             </CardTitle>
-                            <CardDescription>Tech Lab A</CardDescription>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Tech Lab 1
+                            </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Hands-on Cloud Native Development</h3>
-                            <p className="mb-2">Practical workshop on microservices architecture and cloud deployment.</p>
-                            <p className="text-sm font-medium">Instructor: Vikram Singh, Lead DevOps Engineer</p>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">Hands-on Cloud Native Development</p>
+                            <p>Learn practical Kubernetes and container orchestration with Vikram Singh, Lead DevOps Engineer. Bring your laptop for this hands-on session.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">Limited to 50 participants</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>120 minutes</span>
+                            </div>
+                            <div className="mt-3">
+                                <Badge className="mr-2 bg-blue-100 text-blue-800">DevOps Track</Badge>
+                                <Badge className="bg-blue-100 text-blue-800">Pre-registration Required</Badge>
+                            </div>
                         </CardContent>
                     </Card>
 
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex justify-between items-center">
-                                <span>4:00 PM - 5:30 PM</span>
+                                <span>4:30 PM - 6:00 PM</span>
                                 <Badge variant="destructive">Workshop</Badge>
                             </CardTitle>
-                            <CardDescription>Tech Lab B</CardDescription>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Security Lab
+                            </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Building Secure Applications</h3>
-                            <p className="mb-2">Best practices for implementing security in your applications.</p>
-                            <p className="text-sm font-medium">Instructor: Priya Sharma, Security Expert</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>6:00 PM - 8:00 PM</span>
-                                <Badge variant="secondary">Networking</Badge>
-                            </CardTitle>
-                            <CardDescription>Terrace Garden</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Welcome Reception</h3>
-                            <p>Evening networking event with refreshments and entertainment.</p>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                <TabsContent value="day2" className="space-y-6">
-                    <h2 className="text-2xl font-bold mb-4">Day 2 - Deep Dive & Skills</h2>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>9:00 AM - 10:00 AM</span>
-                                <Badge variant="secondary">Keynote</Badge>
-                            </CardTitle>
-                            <CardDescription>Main Stage</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Web3 and the Decentralized Future</h3>
-                            <p className="mb-2">Exploring the potential of blockchain and decentralized applications.</p>
-                            <p className="text-sm font-medium">Speaker: Rajiv Mehta, Blockchain Architect</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>10:30 AM - 12:00 PM</span>
-                                <Badge variant="outline">Technical Session</Badge>
-                            </CardTitle>
-                            <CardDescription>Developer Zone</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Advanced React Patterns</h3>
-                            <p className="mb-2">Optimizing performance and maintainability in large React applications.</p>
-                            <p className="text-sm font-medium">Speaker: Neha Gupta, Senior Frontend Engineer</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>12:00 PM - 1:30 PM</span>
-                                <Badge>Lunch Break</Badge>
-                            </CardTitle>
-                            <CardDescription>Dining Area</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <p>Themed lunch with topic-based tables for focused discussions.</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>1:30 PM - 3:00 PM</span>
-                                <Badge variant="destructive">Workshop</Badge>
-                            </CardTitle>
-                            <CardDescription>Tech Lab A</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Machine Learning in Production</h3>
-                            <p className="mb-2">Deploying and scaling ML models in production environments.</p>
-                            <p className="text-sm font-medium">Instructor: Dr. Anand Krishnan, ML Engineer</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>3:30 PM - 5:00 PM</span>
-                                <Badge variant="outline">Panel Discussion</Badge>
-                            </CardTitle>
-                            <CardDescription>Innovation Theater</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Tech Leadership: Building High-Performance Teams</h3>
-                            <p className="mb-2">CTOs and Engineering Managers share insights on tech leadership.</p>
-                            <p className="text-sm font-medium">Moderator: Sunita Reddy, VP Engineering</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>5:30 PM - 7:30 PM</span>
-                                <Badge variant="secondary">Hackathon</Badge>
-                            </CardTitle>
-                            <CardDescription>Collaboration Space</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Mini-Hackathon Kickoff</h3>
-                            <p>Form teams and start working on 24-hour innovation challenges.</p>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                <TabsContent value="day3" className="space-y-6">
-                    <h2 className="text-2xl font-bold mb-4">Final Day - Future & Connections</h2>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>9:00 AM - 10:00 AM</span>
-                                <Badge variant="secondary">Keynote</Badge>
-                            </CardTitle>
-                            <CardDescription>Main Stage</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Sustainable Technology for a Better Future</h3>
-                            <p className="mb-2">How tech can help address climate change and sustainability challenges.</p>
-                            <p className="text-sm font-medium">Speaker: Maya Patel, Sustainability Expert</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>10:30 AM - 12:00 PM</span>
-                                <Badge variant="destructive">Workshop</Badge>
-                            </CardTitle>
-                            <CardDescription>Tech Lab B</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Low-Code Development for Rapid Prototyping</h3>
-                            <p className="mb-2">Using modern tools to accelerate application development.</p>
-                            <p className="text-sm font-medium">Instructor: Arjun Malhotra, Product Architect</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>12:00 PM - 1:30 PM</span>
-                                <Badge>Lunch Break</Badge>
-                            </CardTitle>
-                            <CardDescription>Dining Area</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <p>Final networking lunch with special dessert bar.</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>1:30 PM - 3:00 PM</span>
-                                <Badge variant="secondary">Hackathon</Badge>
-                            </CardTitle>
-                            <CardDescription>Main Stage</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Hackathon Presentations & Awards</h3>
-                            <p>Teams present their solutions followed by judges' feedback and awards ceremony.</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>3:30 PM - 4:30 PM</span>
-                                <Badge variant="outline">Technical Session</Badge>
-                            </CardTitle>
-                            <CardDescription>Developer Zone</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Quantum Computing: The Next Frontier</h3>
-                            <p className="mb-2">Introduction to quantum computing concepts and their potential applications.</p>
-                            <p className="text-sm font-medium">Speaker: Dr. Sanjay Kumar, Quantum Researcher</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                                <span>5:00 PM - 6:30 PM</span>
-                                <Badge variant="secondary">Closing Keynote</Badge>
-                            </CardTitle>
-                            <CardDescription>Main Stage</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">Transforming Ideas into Impact</h3>
-                            <p className="mb-2">Inspirational talk on taking innovations from concept to global impact.</p>
-                            <p className="text-sm font-medium">Speaker: Ravi Sharma, Serial Entrepreneur</p>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">Practical Application Security</p>
+                            <p>Learn how to identify and fix common security vulnerabilities with Priya Sharma, Security Expert. Live demo of penetration testing techniques.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">Limited to 40 participants</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>90 minutes</span>
+                            </div>
+                            <div className="mt-3">
+                                <Badge className="mr-2 bg-red-100 text-red-800">Security Track</Badge>
+                                <Badge className="bg-blue-100 text-blue-800">Pre-registration Required</Badge>
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -316,63 +169,287 @@ export default function SchedulePage() {
                         <CardHeader>
                             <CardTitle className="flex justify-between items-center">
                                 <span>7:00 PM - 10:00 PM</span>
-                                <Badge>Closing Party</Badge>
+                                <Badge>Networking Event</Badge>
                             </CardTitle>
-                            <CardDescription>Terrace Garden</CardDescription>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Rooftop Garden
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <h3 className="font-semibold text-lg mb-2">TechFest Celebration</h3>
-                            <p>Farewell dinner, music, and celebration to conclude the event.</p>
+                            <p>Welcome reception with food, drinks, and entertainment. Great opportunity to connect with speakers and fellow attendees in a relaxed environment.</p>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="day2" className="space-y-6">
+                    <h2 className="text-2xl font-bold mb-4">Day 2 - Deep Dives & Skill Building</h2>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>9:00 AM - 10:00 AM</span>
+                                <Badge>Breakfast & Networking</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Main Hall
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Day 2 kickoff with continental breakfast and themed networking tables.</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>10:00 AM - 11:00 AM</span>
+                                <Badge variant="secondary">Keynote</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Main Stage
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">Building the Decentralized Future</p>
+                            <p>Rajiv Mehta shares insights on the evolution of Web3 technologies and how decentralization is reshaping digital ownership and governance.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">All Attendees</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>60 minutes</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>11:15 AM - 12:30 PM</span>
+                                <Badge variant="outline">Parallel Sessions</Badge>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div className="p-4 border rounded-md">
+                                    <p className="font-medium">React Performance Optimization</p>
+                                    <p className="text-sm text-muted-foreground mb-2">Neha Gupta - Hall A</p>
+                                    <p className="text-sm">Advanced techniques to optimize React applications for speed and user experience.</p>
+                                    <Badge className="mt-2 bg-green-100 text-green-800">Frontend Track</Badge>
+                                </div>
+                                <div className="p-4 border rounded-md">
+                                    <p className="font-medium">ML at Scale: From POC to Production</p>
+                                    <p className="text-sm text-muted-foreground mb-2">Dr. Anand Krishnan - Hall B</p>
+                                    <p className="text-sm">Practical strategies for deploying machine learning models at scale.</p>
+                                    <Badge className="mt-2 bg-purple-100 text-purple-800">Data Science Track</Badge>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>12:30 PM - 2:00 PM</span>
+                                <Badge>Lunch Break</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Food Court
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Lunch with special guest tables hosted by speakers and industry experts.</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>2:00 PM - 3:30 PM</span>
+                                <Badge variant="outline">Panel Discussion</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Main Stage
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">Tech Leadership: Building High-Performing Teams</p>
+                            <p>Industry leaders discuss strategies for technical leadership, team building, and fostering innovation. Moderated by Sunita Reddy.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">All Attendees</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>90 minutes</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>4:00 PM - 6:00 PM</span>
+                                <Badge variant="outline">Parallel Sessions</Badge>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div className="p-4 border rounded-md">
+                                    <p className="font-medium">Quantum Computing: Present and Future</p>
+                                    <p className="text-sm text-muted-foreground mb-2">Dr. Sanjay Kumar - Hall A</p>
+                                    <p className="text-sm">Understanding quantum computing fundamentals and practical applications on the horizon.</p>
+                                    <Badge className="mt-2 bg-yellow-100 text-yellow-800">Emerging Tech Track</Badge>
+                                </div>
+                                <div className="p-4 border rounded-md">
+                                    <p className="font-medium">Building Sustainable Tech</p>
+                                    <p className="text-sm text-muted-foreground mb-2">Maya Patel - Hall B</p>
+                                    <p className="text-sm">Strategies for reducing carbon footprint in software development and IT operations.</p>
+                                    <Badge className="mt-2 bg-green-100 text-green-800">Sustainability Track</Badge>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>7:00 PM - 10:00 PM</span>
+                                <Badge>Startup Showcase</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Exhibition Hall
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p>30 innovative startups showcase their products and services. Includes pitch competition and networking with investors.</p>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="day3" className="space-y-6">
+                    <h2 className="text-2xl font-bold mb-4">Final Day - Future Perspectives & Implementation</h2>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>9:00 AM - 10:00 AM</span>
+                                <Badge>Breakfast & Networking</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Main Hall
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Final day kickoff with breakfast and reflection tables on key learnings from the previous days.</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>10:00 AM - 11:00 AM</span>
+                                <Badge variant="secondary">Keynote</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Main Stage
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">Technology for a Sustainable Future</p>
+                            <p>Maya Patel explores how technology can be a powerful force for environmental sustainability and addressing climate change.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">All Attendees</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>60 minutes</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>11:15 AM - 12:30 PM</span>
+                                <Badge variant="destructive">Workshop</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Tech Lab 2
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">Rapid Application Development with Low-Code</p>
+                            <p>Arjun Malhotra demonstrates how to build enterprise-grade applications in record time using low-code platforms.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">Limited to 40 participants</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>75 minutes</span>
+                            </div>
+                            <div className="mt-3">
+                                <Badge className="mr-2 bg-blue-100 text-blue-800">Development Track</Badge>
+                                <Badge className="bg-blue-100 text-blue-800">Pre-registration Required</Badge>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>12:30 PM - 2:00 PM</span>
+                                <Badge>Lunch Break</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Food Court
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Final networking lunch with wrap-up discussions.</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>2:00 PM - 3:30 PM</span>
+                                <Badge variant="outline">Fireside Chat</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Main Stage
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">From Startup to Success: The Entrepreneurial Journey</p>
+                            <p>Ravi Sharma shares his journey of building multiple successful technology ventures, with insights on navigating challenges and scaling products.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">All Attendees</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>90 minutes</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>4:00 PM - 5:30 PM</span>
+                                <Badge variant="outline">Closing Session</Badge>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" /> Main Stage
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <p className="font-medium">Future Forward: Key Takeaways and Next Steps</p>
+                            <p>Conference summary, key insights from all tracks, and announcement of next year's event. Includes audience Q&A and final networking opportunity.</p>
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Users className="h-4 w-4 mr-1" /> <span className="mr-4">All Attendees</span>
+                                <Clock className="h-4 w-4 mr-1" /> <span>90 minutes</span>
+                            </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
             </Tabs>
 
             <div className="mt-16 text-center">
-                <h2 className="text-2xl font-bold mb-4">Event Venues</h2>
-                <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto text-left">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Main Stage</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>Located in the Grand Ballroom, Level 1. Capacity: 800 people. All keynotes and major presentations.</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Tech Labs</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>Tech Lab A & B are on Level 2. Each equipped with workstations for hands-on workshops. Capacity: 100 people each.</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Innovation Theater</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>Located on Level 2. An intimate space for panel discussions and specialized talks. Capacity: 200 people.</p>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-
-            <div className="mt-16 text-center bg-muted p-8 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Download the TechFest App</h2>
-                <p className="max-w-2xl mx-auto mb-6">
-                    Get the most out of your TechFest experience with our mobile app. Access real-time schedule updates, speaker info, networking features, and more.
+                <h2 className="text-2xl font-bold mb-6">Need Help Planning Your Schedule?</h2>
+                <p className="max-w-2xl mx-auto mb-8">
+                    Use our Schedule Builder tool to create a personalized agenda based on your interests and track preferences.
                 </p>
-                <div className="flex justify-center gap-4">
-                    <button className="bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium">
-                        App Store
-                    </button>
-                    <button className="bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium">
-                        Google Play
-                    </button>
-                </div>
+                <Button className="mr-4">
+                    Build My Schedule
+                </Button>
+                <Button variant="outline">
+                    Download Full Schedule (PDF)
+                </Button>
             </div>
         </div>
     );

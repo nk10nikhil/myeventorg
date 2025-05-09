@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="60" viewBox="0 0 180 60">
-  <rect width="180" height="60" fill="none"/>
-  <path d="M60,30l10-10v20z" fill="none" stroke="currentColor" stroke-width="2"/>
-  <path d="M120,30l-10-10v20z" fill="none" stroke="currentColor" stroke-width="2"/>
-  <path d="M75,20h30v20H75z" fill="none" stroke="currentColor" stroke-width="2"/>
-  <text x="90" y="33" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle" fill="currentColor">DevForge</text>
-  <text x="90" y="50" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="currentColor">DEVELOPER TOOLS</text>
-</svg>

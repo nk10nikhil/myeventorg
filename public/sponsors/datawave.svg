@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="60" viewBox="0 0 180 60">
-  <rect width="180" height="60" fill="none"/>
-  <path d="M40,30c0,0,20-10,40,0s40,0,60,0" stroke="currentColor" stroke-width="2" fill="none"/>
-  <path d="M40,40c0,0,20-10,40,0s40,0,60,0" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="2,2"/>
-  <text x="90" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="currentColor">DataWave</text>
-</svg>

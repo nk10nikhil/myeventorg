@@ -33,7 +33,7 @@ export default function AboutPage() {
                                 </div>
                                 <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm p-3 rounded-lg border border-border/40">
                                     <MapPin className="w-5 h-5 text-primary" />
-                                    <span className="text-sm">Delhi, India</span>
+                                    <span className="text-sm">GCET, India</span>
                                 </div>
                                 <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm p-3 rounded-lg border border-border/40">
                                     <Users className="w-5 h-5 text-primary" />
@@ -102,49 +102,50 @@ export default function AboutPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="relative aspect-square overflow-hidden rounded-xl md:aspect-[4/5] lg:aspect-square">
                                 <Image
-                                    src="/tech-event.jpg"
-                                    alt="TechFest First Event"
+                                    src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80"
+                                    alt="TechFest 2018 - First Event"
                                     fill
                                     className="object-cover"
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
-                                    <p className="text-white/90 text-xs">TechFest 2018</p>
+                                    <p className="text-white/90 text-xs">TechFest 2018 – The Beginning</p>
                                 </div>
                             </div>
                             <div className="relative aspect-square overflow-hidden rounded-xl md:aspect-[4/5] lg:aspect-square">
                                 <Image
-                                    src="/placeholder.jpg"
-                                    alt="TechFest Growth"
+                                    src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
+                                    alt="TechFest Growth - Large Audience"
                                     fill
                                     className="object-cover"
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
-                                    <p className="text-white/90 text-xs">TechFest 2022</p>
+                                    <p className="text-white/90 text-xs">TechFest 2022 – Back to In-Person</p>
                                 </div>
                             </div>
                             <div className="relative aspect-square overflow-hidden rounded-xl md:aspect-[4/5] lg:aspect-square">
                                 <Image
-                                    src="/placeholder.jpg"
-                                    alt="TechFest Virtual"
+                                    src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80"
+                                    alt="TechFest Virtual 2020 - Online Event"
                                     fill
                                     className="object-cover"
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
-                                    <p className="text-white/90 text-xs">Virtual TechFest 2020</p>
+                                    <p className="text-white/90 text-xs">Virtual TechFest 2020 – Going Global</p>
                                 </div>
                             </div>
                             <div className="relative aspect-square overflow-hidden rounded-xl md:aspect-[4/5] lg:aspect-square">
                                 <Image
-                                    src="/placeholder.jpg"
-                                    alt="TechFest Today"
+                                    src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80"
+                                    alt="TechFest 2024 - Modern Event"
                                     fill
                                     className="object-cover"
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
-                                    <p className="text-white/90 text-xs">TechFest 2024</p>
+                                    <p className="text-white/90 text-xs">TechFest 2024 – India's Largest Tech Festival</p>
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </section>
@@ -624,50 +625,24 @@ export default function AboutPage() {
 
                     <div className="space-y-10">
                         <div className="space-y-6">
-                            <h3 className="text-xl font-semibold text-center">Platinum Sponsors</h3>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 items-center justify-items-center">
-                                {["placeholder-logo.svg", "placeholder-logo.svg", "placeholder-logo.svg", "placeholder-logo.svg"].map((logo, index) => (
-                                    <div key={index} className="bg-background/80 rounded-xl shadow-sm border border-border/40 hover:border-primary/20 p-6 w-full max-w-[180px] h-[100px] flex items-center justify-center transition-all duration-300 hover:shadow-md">
+                                {[
+                                    "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
+                                    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/X_logo_2023_original.svg/450px-X_logo_2023_original.svg.png", // Example: X (Twitter)
+                                    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png", // Example: Amazon
+                                    "https://upload.wikimedia.org/wikipedia/commons/5/51/Google.png",
+                                    "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
+                                ].map((logo, index) => (
+                                    <div
+                                        key={index}
+                                        className="bg-background/80 rounded-xl shadow-sm border border-border/40 hover:border-primary/20 p-6 w-full max-w-[180px] h-[100px] flex items-center justify-center transition-all duration-300 hover:shadow-md"
+                                    >
                                         <Image
-                                            src={`/${logo}`}
+                                            src={logo}
                                             alt={`Platinum Sponsor ${index + 1}`}
                                             width={120}
                                             height={60}
                                             className="object-contain max-h-[60px] opacity-80 hover:opacity-100 transition-opacity duration-300"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-semibold text-center">Gold Sponsors</h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5 items-center justify-items-center">
-                                {["placeholder-logo.svg", "placeholder-logo.svg", "placeholder-logo.svg", "placeholder-logo.svg", "placeholder-logo.svg"].map((logo, index) => (
-                                    <div key={index} className="bg-background/80 rounded-xl shadow-sm border border-border/40 hover:border-primary/20 p-4 w-full max-w-[150px] h-[80px] flex items-center justify-center transition-all duration-300">
-                                        <Image
-                                            src={`/${logo}`}
-                                            alt={`Gold Sponsor ${index + 1}`}
-                                            width={100}
-                                            height={50}
-                                            className="object-contain max-h-[50px] opacity-80 hover:opacity-100 transition-opacity duration-300"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-semibold text-center">Partners</h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 items-center justify-items-center">
-                                {Array(6).fill("placeholder-logo.svg").map((logo, index) => (
-                                    <div key={index} className="bg-background/80 rounded-xl shadow-sm border border-border/40 hover:border-primary/20 p-3 w-full max-w-[120px] h-[70px] flex items-center justify-center transition-all duration-300">
-                                        <Image
-                                            src={`/${logo}`}
-                                            alt={`Partner ${index + 1}`}
-                                            width={80}
-                                            height={40}
-                                            className="object-contain max-h-[40px] opacity-70 hover:opacity-100 transition-opacity duration-300"
                                         />
                                     </div>
                                 ))}
@@ -824,7 +799,7 @@ export default function AboutPage() {
                             {[
                                 {
                                     question: "When and where is TechFest 2025 taking place?",
-                                    answer: "TechFest 2025 will be held on July 15, 2025, at the Delhi International Convention Center in New Delhi, India. The event will run from 9:00 AM to 6:00 PM."
+                                    answer: "TechFest 2025 will be held on July 15, 2025, at the GCET, Greater Noida, UP, India. The event will run from 9:00 AM to 6:00 PM."
                                 },
                                 {
                                     question: "How can I register for TechFest 2025?",
@@ -840,7 +815,7 @@ export default function AboutPage() {
                                 },
                                 {
                                     question: "Can I become a speaker or presenter at TechFest 2025?",
-                                    answer: "Yes, we welcome speaker applications! Our call for proposals (CFP) is open until January 15, 2025. Visit our 'Become a Speaker' page to submit your proposal and learn about our selection criteria."
+                                    answer: "Yes, we welcome speaker applications! Our call for proposals (CFP) is open until July 15, 2025. Visit our 'Become a Speaker' page to submit your proposal and learn about our selection criteria."
                                 },
                                 {
                                     question: "Are there sponsorship opportunities available?",
@@ -870,7 +845,7 @@ export default function AboutPage() {
                             <p className="text-muted-foreground">
                                 Still have questions? Contact us at{" "}
                                 <a href="mailto:info@techfest2025.com" className="text-primary hover:underline">
-                                    info@techfest2025.com
+                                    nk10nikhil@gmail.com
                                 </a>
                             </p>
                         </div>
@@ -910,7 +885,7 @@ export default function AboutPage() {
                             <span>July 15, 2025</span>
                             <span className="text-muted-foreground">•</span>
                             <MapPin className="h-4 w-4 text-primary" />
-                            <span>Delhi International Convention Center</span>
+                            <span>GCET, Greater Noida, UP, India</span>
                         </div>
                     </div>
                 </div>

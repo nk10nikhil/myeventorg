@@ -1,5 +1,7 @@
 import React from 'react';
-import Image from 'next/image';
+import { Metadata } from "next";
+import Link from "next/link";
+import SpeakerImage from "@/components/speaker-image";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -33,15 +35,9 @@ export default function SpeakersPage() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/aishwarya-patel.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/aishwarya-patel.jpg"
                                     alt="Aishwarya Patel"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -65,15 +61,9 @@ export default function SpeakersPage() {
 
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/rajiv-mehta.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/rajiv-mehta.jpg"
                                     alt="Rajiv Mehta"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -97,15 +87,9 @@ export default function SpeakersPage() {
 
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/maya-patel.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/maya-patel.jpg"
                                     alt="Maya Patel"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -129,15 +113,9 @@ export default function SpeakersPage() {
 
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/ravi-sharma.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/ravi-sharma.jpg"
                                     alt="Ravi Sharma"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -165,15 +143,9 @@ export default function SpeakersPage() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/neha-gupta.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/neha-gupta.jpg"
                                     alt="Neha Gupta"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -197,15 +169,9 @@ export default function SpeakersPage() {
 
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/dr-sanjay-kumar.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/dr-sanjay-kumar.jpg"
                                     alt="Dr. Sanjay Kumar"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -229,15 +195,9 @@ export default function SpeakersPage() {
 
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/dr-anand-krishnan.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/dr-anand-krishnan.jpg"
                                     alt="Dr. Anand Krishnan"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -265,15 +225,9 @@ export default function SpeakersPage() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/dr-rajan-kapoor.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/dr-rajan-kapoor.jpg"
                                     alt="Dr. Rajan Kapoor"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -297,15 +251,9 @@ export default function SpeakersPage() {
 
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/sunita-reddy.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/sunita-reddy.jpg"
                                     alt="Sunita Reddy"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -333,15 +281,9 @@ export default function SpeakersPage() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/vikram-singh.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/vikram-singh.jpg"
                                     alt="Vikram Singh"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -365,15 +307,9 @@ export default function SpeakersPage() {
 
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/priya-sharma.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/priya-sharma.jpg"
                                     alt="Priya Sharma"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
@@ -397,15 +333,9 @@ export default function SpeakersPage() {
 
                         <Card className="overflow-hidden flex flex-col">
                             <div className="relative h-[240px] w-full">
-                                <Image 
-                                    src="/speakers/arjun-malhotra.jpg" 
+                                <SpeakerImage
+                                    src="/speakers/arjun-malhotra.jpg"
                                     alt="Arjun Malhotra"
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.src = "/placeholder-user.jpg";
-                                    }}
                                 />
                             </div>
                             <CardHeader>
