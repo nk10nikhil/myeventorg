@@ -95,6 +95,22 @@ function RegisterForm() {
 
       const orderData = await orderRes.json();
 
+      if (!orderRes.ok) {
+        throw new Error(orderData.error || "Failed to create order");
+      }
+
+      // Test mode - skip Razorpay and directly verify
+      if (orderData.testMode) {
+        setToast({ message: "Test mode: Simulating payment...", type: "info" });
+        await verifyPayment(
+          orderData.orderId,
+          `test_payment_${Date.now()}`,
+          `test_signature_${Date.now()}`,
+          userId,
+        );
+        return;
+      }
+
       // Load Razorpay script
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -132,7 +148,10 @@ function RegisterForm() {
         razorpay.open();
       };
     } catch (error: any) {
-      setToast({ message: "Failed to initiate payment", type: "error" });
+      setToast({
+        message: error.message || "Failed to initiate payment",
+        type: "error",
+      });
       setLoading(false);
     }
   };

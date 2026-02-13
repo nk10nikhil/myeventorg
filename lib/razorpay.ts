@@ -11,14 +11,26 @@ export const createRazorpayOrder = async (
   receiptId: string,
 ) => {
   try {
+    // Check if keys are configured
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      throw new Error(
+        "Razorpay keys not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in .env",
+      );
+    }
+
     const order = await razorpay.orders.create({
       amount: amount * 100, // amount in paise
       currency: "INR",
       receipt: receiptId,
     });
     return order;
-  } catch (error) {
-    throw new Error("Failed to create Razorpay order");
+  } catch (error: any) {
+    console.error("Razorpay order creation error:", error);
+    throw new Error(
+      error.error?.description ||
+        error.message ||
+        "Failed to create Razorpay order",
+    );
   }
 };
 

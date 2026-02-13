@@ -14,8 +14,14 @@ export async function POST(request: NextRequest) {
     const { orderId, paymentId, signature, userId, eventId, amount } =
       await request.json();
 
-    // Verify payment signature
-    const isValid = verifyRazorpaySignature(orderId, paymentId, signature);
+    // Test mode - skip signature verification
+    const isTestMode = orderId?.startsWith("test_order_");
+
+    let isValid = true;
+    if (!isTestMode) {
+      // Verify payment signature for real payments
+      isValid = verifyRazorpaySignature(orderId, paymentId, signature);
+    }
 
     if (!isValid) {
       return NextResponse.json(
@@ -40,7 +46,7 @@ export async function POST(request: NextRequest) {
       eventId,
       qrCode,
       qrId,
-      paymentId,
+      paymentId: isTestMode ? `test_payment_${Date.now()}` : paymentId,
       paymentStatus: "completed",
       amount: amount / 100, // Convert paise to rupees
       scanStatus: "unused",
@@ -52,13 +58,18 @@ export async function POST(request: NextRequest) {
 
     if (user && event) {
       // Send ticket email
-      await sendTicketEmail(
-        user.email,
-        user.name,
-        event.name,
-        qrCode,
-        ticket._id.toString(),
-      );
+      try {
+        await sendTicketEmail(
+          user.email,
+          user.name,
+          event.name,
+          qrCode,
+          ticket._id.toString(),
+        );
+      } catch (emailError) {
+        console.error("Email sending failed:", emailError);
+        // Don't fail the whole request if email fails
+      }
     }
 
     return NextResponse.json({

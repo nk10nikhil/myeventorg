@@ -15,6 +15,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
+    // Test mode - bypass Razorpay
+    if (process.env.RAZORPAY_TEST_MODE === "true") {
+      return NextResponse.json({
+        orderId: `test_order_${Date.now()}`,
+        amount: event.ticketPrice * 100,
+        currency: "INR",
+        key: "test_key",
+        testMode: true,
+      });
+    }
+
     const receiptId = `receipt_${userId}_${Date.now()}`;
     const order = await createRazorpayOrder(event.ticketPrice, receiptId);
 
@@ -24,10 +35,10 @@ export async function POST(request: NextRequest) {
       currency: order.currency,
       key: process.env.RAZORPAY_KEY_ID,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Create order error:", error);
     return NextResponse.json(
-      { error: "Failed to create order" },
+      { error: error.message || "Failed to create order" },
       { status: 500 },
     );
   }
