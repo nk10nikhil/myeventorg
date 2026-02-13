@@ -52,7 +52,7 @@ export default function SuperAdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
@@ -68,22 +68,26 @@ export default function SuperAdminLogin() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <button
+        <motion.button
+          whileHover={{ x: -4 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 mb-6 text-gray-600 dark:text-gray-400 hover:text-primary"
+          className="flex items-center gap-2 mb-6 text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to home
-        </button>
+        </motion.button>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl sm:rounded-2xl shadow-sm p-6 sm:p-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg">
-              <Crown className="w-8 h-8 text-white" />
+            <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl">
+              <Crown className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Super Admin</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                Super Admin
+              </h1>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 Full system access
               </p>
             </div>
@@ -91,7 +95,9 @@ export default function SuperAdminLogin() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                Email
+              </label>
               <input
                 type="email"
                 required
@@ -99,13 +105,16 @@ export default function SuperAdminLogin() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 
+                           focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-colors text-sm sm:text-base"
                 placeholder="superadmin@example.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
+              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                Password
+              </label>
               <input
                 type="password"
                 required
@@ -113,7 +122,8 @@ export default function SuperAdminLogin() {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 
+                           focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-colors text-sm sm:text-base"
                 placeholder="••••••••"
               />
             </div>
@@ -131,7 +141,7 @@ export default function SuperAdminLogin() {
           </form>
 
           <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+            <p className="text-xs sm:text-sm text-yellow-800 dark:text-yellow-200">
               <strong>Default Credentials:</strong>
               <br />
               Email: nk10nikhil@gmail.com

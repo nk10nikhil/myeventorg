@@ -248,7 +248,7 @@ function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8 sm:py-12">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
@@ -262,140 +262,193 @@ function RegisterForm() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <button
+        <motion.button
+          whileHover={{ x: -4 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 mb-6 text-gray-600 dark:text-gray-400 hover:text-primary"
+          className="flex items-center gap-2 mb-6 text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to home
-        </button>
+        </motion.button>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-          <h1 className="text-3xl font-bold mb-2">Register</h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {event ? `for ${event.name}` : "Create your account"}
-          </p>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-sm">
+          <div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-gray-900 dark:text-white">
+              Register
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base">
+              {event ? `for ${event.name}` : "Create your account"}
+            </p>
 
-          {event && (
-            <div className="mb-6 p-4 bg-primary/10 rounded-lg">
-              <p className="text-sm">
-                <strong>Event:</strong> {event.name}
+            {event && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 rounded-lg sm:rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
+              >
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 sm:gap-0">
+                  <div>
+                    <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
+                      {event.name}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {new Date(event.startDate).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <div className="text-left sm:text-right">
+                    <div className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400">
+                      ₹{event.ticketPrice}
+                    </div>
+                    <p className="text-xs text-gray-500">per ticket</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
+                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             outline-none transition-colors text-sm sm:text-base"
+                    placeholder="John Doe"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
+                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             outline-none transition-colors text-sm sm:text-base"
+                    placeholder="john@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
+                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             outline-none transition-colors text-sm sm:text-base"
+                    placeholder="+91 1234567890"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Date of Birth
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={formData.dateOfBirth}
+                    onChange={(e) =>
+                      setFormData({ ...formData, dateOfBirth: e.target.value })
+                    }
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
+                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             outline-none transition-colors text-sm sm:text-base"
+                    aria-label="Date of birth"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Create Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
+                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             outline-none transition-colors text-sm sm:text-base"
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
+                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             outline-none transition-colors text-sm sm:text-base"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full mt-2"
+                loading={loading}
+                size="lg"
+              >
+                {event ? `Register & Pay ₹${event.ticketPrice}` : "Register"}
+              </Button>
+            </form>
+
+            <div className="mt-8 text-center">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Already have an account?{" "}
+                <button
+                  onClick={() => router.push("/login")}
+                  className="text-primary-600 dark:text-primary-400 hover:underline"
+                >
+                  Login here
+                </button>
               </p>
-              <p className="text-sm">
-                <strong>Price:</strong> ₹{event.ticketPrice}
-              </p>
             </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
-                placeholder="John Doe"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
-                placeholder="john@example.com"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
-                placeholder="+91 1234567890"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                required
-                value={formData.dateOfBirth}
-                onChange={(e) =>
-                  setFormData({ ...formData, dateOfBirth: e.target.value })
-                }
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
-                aria-label="Date of birth"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
-              <input
-                type="password"
-                required
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                required
-                value={formData.confirmPassword}
-                onChange={(e) =>
-                  setFormData({ ...formData, confirmPassword: e.target.value })
-                }
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <Button type="submit" className="w-full" loading={loading}>
-              Register & Pay
-            </Button>
-          </form>
-
-          <p className="text-center mt-6 text-sm text-gray-600 dark:text-gray-400">
-            Already have an account?{" "}
-            <button
-              onClick={() => router.push("/login")}
-              className="text-primary hover:underline"
-            >
-              Login
-            </button>
-          </p>
+          </div>
         </div>
       </motion.div>
     </div>
