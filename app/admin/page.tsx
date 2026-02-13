@@ -124,6 +124,9 @@ export default function AdminLogin() {
             <Button type="submit" className="w-full" loading={loading}>
               Login
             </Button>
+            <Button variant="outline" onClick={() => router.push("/super-admin")} className="w-full">
+              Super Admin Login
+            </Button>
           </form>
         </div>
       </motion.div>

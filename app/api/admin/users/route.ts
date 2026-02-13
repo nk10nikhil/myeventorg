@@ -7,9 +7,9 @@ import { getUserFromRequest } from "@/lib/middleware";
 
 export async function GET(request: NextRequest) {
   try {
-    const admin = getUserFromRequest(request);
+    const user = getUserFromRequest(request);
 
-    if (!admin || admin.role !== "admin") {
+    if (!user || (user.role !== "admin" && user.role !== "superadmin")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -22,8 +22,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Event ID required" }, { status: 400 });
     }
 
-    // Verify admin has access to this event
-    if (admin.eventIds && !admin.eventIds.includes(eventId)) {
+    // Verify admin has access to this event (skip check for superadmin)
+    if (
+      user.role === "admin" &&
+      user.eventIds &&
+      !user.eventIds.includes(eventId)
+    ) {
       return NextResponse.json(
         { error: "Not authorized to view this event" },
         { status: 403 },

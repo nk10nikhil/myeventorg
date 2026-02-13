@@ -25,7 +25,9 @@ export default function AdminScanner() {
   const [gateName, setGateName] = useState("Gate A");
   const [offlineScans, setOfflineScans] = useState<any[]>([]);
   const [scanResult, setScanResult] = useState<any>(null);
-  const [scanFeedback, setScanFeedback] = useState<"success" | "error" | null>(null);
+  const [scanFeedback, setScanFeedback] = useState<"success" | "error" | null>(
+    null,
+  );
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error" | "info";
@@ -47,10 +49,10 @@ export default function AdminScanner() {
 
     // Initialize audio elements
     successAudioRef.current = new Audio(
-      "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR4P..."
+      "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR4P...",
     );
     errorAudioRef.current = new Audio(
-      "data:audio/wav;base64,UklGRmQBAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAATElTVBoAAABJTkZPSVNGVA4AAABMYXZmNTguMjkuMTAwAGRhdGEAAQAAAAEA..."
+      "data:audio/wav;base64,UklGRmQBAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAATElTVBoAAABJTkZPSVNGVA4AAABMYXZmNTguMjkuMTAwAGRhdGEAAQAAAAEA...",
     );
 
     // Listen for online/offline events
@@ -167,7 +169,10 @@ export default function AdminScanner() {
     } catch (error: any) {
       console.error("Online scan error:", error);
       showImmediateFeedback("error");
-      showScanResult("error", error.message || "Scan failed - Please check connection");
+      showScanResult(
+        "error",
+        error.message || "Scan failed - Please check connection",
+      );
     }
   };
 
@@ -195,13 +200,6 @@ export default function AdminScanner() {
     setTimeout(() => {
       setScanFeedback(null);
     }, 1500);
-  };
-      console.error("Online scan error:", error);
-      showScanResult(
-        "error",
-        error.message || "Scan failed - Please check connection",
-      );
-    }
   };
 
   const scanOffline = (qrId: string) => {
