@@ -1,118 +1,180 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { signIn } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { toast } from "@/components/ui/use-toast"
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import Button from "@/components/Button";
+import ThemeToggle from "@/components/ThemeToggle";
+import Toast from "@/components/Toast";
+import { ArrowLeft } from "lucide-react";
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
-  }),
-})
+function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [events, setEvents] = useState<any[]>([]);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    eventId: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
 
-export default function LoginPage() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const router = useRouter()
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  })
+  const fetchEvents = async () => {
+    try {
+      const res = await fetch("/api/events?active=true");
+      const data = await res.json();
+      setEvents(data.events || []);
+      if (data.events?.length > 0) {
+        setFormData((prev) => ({ ...prev, eventId: data.events[0]._id }));
+      }
+    } catch (error) {
+      console.error("Failed to fetch events:", error);
+    }
+  };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: values.email,
-        password: values.password,
-      })
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-      if (result?.error) {
-        throw new Error(result.error)
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
       }
 
-      toast({
-        title: "Login Successful",
-        description: "Redirecting to admin dashboard...",
-      })
-
-      router.push("/admin/dashboard")
-    } catch (error) {
-      console.error("Login error:", error)
-      toast({
-        title: "Login Failed",
-        description: error instanceof Error ? error.message : "Invalid email or password",
-        variant: "destructive",
-      })
+      setToast({
+        message: "Login successful! Redirecting...",
+        type: "success",
+      });
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1500);
+    } catch (error: any) {
+      setToast({ message: error.message, type: "error" });
     } finally {
-      setIsSubmitting(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="container flex items-center justify-center min-h-screen py-8">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Admin Login</CardTitle>
-          <CardDescription>Login to access the admin dashboard for TechFest 2025.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="admin@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Logging in..." : "Login"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
-            Admin access only. Contact the event organizer if you need access.
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
+      {toast && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+          <Toast {...toast} onClose={() => setToast(null)} />
+        </div>
+      )}
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md"
+      >
+        <button
+          onClick={() => router.push("/")}
+          className="flex items-center gap-2 mb-6 text-gray-600 dark:text-gray-400 hover:text-primary"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to home
+        </button>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+          <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Login to your account
           </p>
-        </CardFooter>
-      </Card>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Event</label>
+              <select
+                required
+                value={formData.eventId}
+                onChange={(e) =>
+                  setFormData({ ...formData, eventId: e.target.value })
+                }
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+                aria-label="Select event"
+              >
+                <option value="">Select Event</option>
+                {events.map((event) => (
+                  <option key={event._id} value={event._id}>
+                    {event.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Email</label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+                placeholder="john@example.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Password</label>
+              <input
+                type="password"
+                required
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <Button type="submit" className="w-full" loading={loading}>
+              Login
+            </Button>
+          </form>
+
+          <p className="text-center mt-6 text-sm text-gray-600 dark:text-gray-400">
+            Don't have an account?{" "}
+            <button
+              onClick={() => router.push("/register")}
+              className="text-primary hover:underline"
+            >
+              Register
+            </button>
+          </p>
+        </div>
+      </motion.div>
     </div>
-  )
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  );
 }

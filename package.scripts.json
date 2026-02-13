@@ -1,0 +1,11 @@
+{
+  "name": "qr-ticketing-system",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "init-db": "ts-node scripts/init-superadmin.ts"
+  }
+}

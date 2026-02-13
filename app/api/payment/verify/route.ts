@@ -1,56 +1,79 @@
-import { type NextRequest, NextResponse } from "next/server"
-import connectDB from "@/lib/db"
-import Registration from "@/models/Registration"
-import { verifyRazorpayPayment } from "@/utils/razorpay"
-import { generateQRCode } from "@/utils/qrcode"
+import { NextRequest, NextResponse } from "next/server";
+import connectDB from "@/lib/db";
+import Ticket from "@/models/Ticket";
+import Event from "@/models/Event";
+import User from "@/models/User";
+import { verifyRazorpaySignature } from "@/lib/razorpay";
+import { generateQRId, generateQRCode } from "@/lib/qr";
+import { sendTicketEmail } from "@/lib/email";
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const { orderId, paymentId, signature } = await req.json()
+    await connectDB();
 
-    if (!orderId || !paymentId || !signature) {
-      return NextResponse.json({ message: "Order ID, payment ID, and signature are required" }, { status: 400 })
-    }
-
-    await connectDB()
-
-    const registration = await Registration.findById(orderId)
-
-    if (!registration) {
-      return NextResponse.json({ message: "Registration not found" }, { status: 404 })
-    }
+    const { orderId, paymentId, signature, userId, eventId, amount } =
+      await request.json();
 
     // Verify payment signature
-    const isValid = verifyRazorpayPayment({
-      orderId: registration.orderId,
-      paymentId,
-      signature,
-    })
+    const isValid = verifyRazorpaySignature(orderId, paymentId, signature);
 
     if (!isValid) {
-      return NextResponse.json({ message: "Invalid payment signature" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Invalid payment signature" },
+        { status: 400 },
+      );
     }
 
     // Generate QR code
+    const qrId = generateQRId();
     const qrData = JSON.stringify({
-      regId: registration._id.toString(),
-      event: "techfest2025",
-    })
+      qrId,
+      ticketId: `TKT_${Date.now()}`,
+      userId,
+      eventId,
+    });
+    const qrCode = await generateQRCode(qrData);
 
-    const qrCode = await generateQRCode(qrData)
+    // Create ticket
+    const ticket = await Ticket.create({
+      userId,
+      eventId,
+      qrCode,
+      qrId,
+      paymentId,
+      paymentStatus: "completed",
+      amount: amount / 100, // Convert paise to rupees
+      scanStatus: "unused",
+    });
 
-    // Update registration
-    registration.paymentId = paymentId
-    registration.paymentVerified = true
-    registration.qrCode = qrCode
-    await registration.save()
+    // Get user and event details
+    const user = await User.findById(userId);
+    const event = await Event.findById(eventId);
+
+    if (user && event) {
+      // Send ticket email
+      await sendTicketEmail(
+        user.email,
+        user.name,
+        event.name,
+        qrCode,
+        ticket._id.toString(),
+      );
+    }
 
     return NextResponse.json({
       message: "Payment verified successfully",
-      registrationId: registration._id,
-    })
+      ticket: {
+        id: ticket._id,
+        qrCode: ticket.qrCode,
+        qrId: ticket.qrId,
+      },
+    });
   } catch (error) {
-    console.error("Payment verification error:", error)
-    return NextResponse.json({ message: "Failed to verify payment" }, { status: 500 })
+    console.error("Payment verification error:", error);
+    return NextResponse.json(
+      { error: "Payment verification failed" },
+      { status: 500 },
+    );
   }
 }

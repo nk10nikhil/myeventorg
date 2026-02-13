@@ -1,37 +1,25 @@
-import type { Metadata } from 'next'
-import './globals.css'
-import AuthProvider from '@/components/session-provider'
-import { ThemeProvider } from '@/components/theme-provider'
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'My Event Org',
-  description: 'Event Management System',
-  generator: 'nk10nikhil',
-  keywords: 'event, management, tech, conference',
-  icons: {
-    icon: '/favicon.ico',
-  },
-}
+  title: "QR Ticketing System",
+  description: "Multi-event QR-based registration and ticketing system",
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </ThemeProvider>
+      <body className={inter.className}>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
