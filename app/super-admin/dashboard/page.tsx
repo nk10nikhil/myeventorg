@@ -64,6 +64,11 @@ export default function SuperAdminDashboard() {
   const [activityLogs, setActivityLogs] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [editingUser, setEditingUser] = useState<any>(null);
+  const [ticketSearchTerm, setTicketSearchTerm] = useState("");
+  const [userSearchTerm, setUserSearchTerm] = useState("");
+  const [logSearchTerm, setLogSearchTerm] = useState("");
+  const [ticketFilter, setTicketFilter] = useState("all"); // all, completed, pending, scanned, not-scanned
+  const [userFilter, setUserFilter] = useState("all"); // all, with-ticket, without-ticket
   const [activeTab, setActiveTab] = useState<"overview" | "tickets" | "logs">(
     "overview",
   );
@@ -1091,20 +1096,76 @@ export default function SuperAdminDashboard() {
         onClose={() => {
           setShowTicketsModal(false);
           setTickets([]);
+          setTicketSearchTerm("");
+          setTicketFilter("all");
         }}
         title="All Tickets"
         size="xl"
       >
         <div className="space-y-4">
-          {tickets.length === 0 ? (
-            <p className="text-center text-gray-500 py-4">No tickets found.</p>
-          ) : (
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              <div className="grid gap-2">
+          {/* Search and Filter */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search by name, email, or event..."
+                value={ticketSearchTerm}
+                onChange={(e) => setTicketSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none text-sm"
+              />
+            </div>
+            <select
+              value={ticketFilter}
+              onChange={(e) => setTicketFilter(e.target.value)}
+              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none text-sm"
+            >
+              <option value="all">All Tickets</option>
+              <option value="completed">Payment Completed</option>
+              <option value="pending">Payment Pending</option>
+              <option value="scanned">Scanned</option>
+              <option value="not-scanned">Not Scanned</option>
+            </select>
+          </div>
+
+          {(() => {
+            // Filter and search logic
+            let filteredTickets = tickets.filter((ticket: any) => {
+              const matchesSearch =
+                ticket.userName
+                  ?.toLowerCase()
+                  .includes(ticketSearchTerm.toLowerCase()) ||
+                ticket.userEmail
+                  ?.toLowerCase()
+                  .includes(ticketSearchTerm.toLowerCase()) ||
+                ticket.eventName
+                  ?.toLowerCase()
+                  .includes(ticketSearchTerm.toLowerCase());
+
+              const matchesFilter =
+                ticketFilter === "all" ||
+                (ticketFilter === "completed" &&
+                  ticket.paymentStatus === "completed") ||
+                (ticketFilter === "pending" &&
+                  ticket.paymentStatus !== "completed") ||
+                (ticketFilter === "scanned" && ticket.scanStatus === "used") ||
+                (ticketFilter === "not-scanned" &&
+                  ticket.scanStatus !== "used");
+
+              return matchesSearch && matchesFilter;
+            });
+
+            return filteredTickets.length === 0 ? (
+              <p className="text-center text-gray-500 py-4">
+                {tickets.length === 0
+                  ? "No tickets found."
+                  : "No tickets match your search criteria."}
+              </p>
+            ) : (
+              <div className="space-y-2 max-h-96 overflow-y-auto">
                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                  Total Tickets: {tickets.length}
+                  Showing {filteredTickets.length} of {tickets.length} tickets
                 </div>
-                {tickets.map((ticket: any, index: number) => (
+                {filteredTickets.map((ticket: any, index: number) => (
                   <div
                     key={index}
                     className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
@@ -1158,8 +1219,8 @@ export default function SuperAdminDashboard() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       </Modal>
 
@@ -1169,47 +1230,88 @@ export default function SuperAdminDashboard() {
         onClose={() => {
           setShowActivityLogsModal(false);
           setActivityLogs([]);
+          setLogSearchTerm("");
         }}
         title="Activity Logs"
         size="xl"
       >
         <div className="space-y-4">
-          {activityLogs.length === 0 ? (
-            <p className="text-center text-gray-500 py-4">
-              No activity logs found.
-            </p>
-          ) : (
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                Total Logs: {activityLogs.length}
-              </div>
-              {activityLogs.map((log: any) => (
-                <div
-                  key={log._id}
-                  className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
-                >
-                  <div className="flex items-start justify-between mb-1">
-                    <div className="flex-1">
-                      <p className="font-medium">{log.action}</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {log.details}
-                      </p>
-                      {log.adminId && (
-                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                          By:{" "}
-                          {log.adminId.name || log.adminId.email || "Unknown"}
+          {/* Search */}
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search by action, details, or admin name..."
+                value={logSearchTerm}
+                onChange={(e) => setLogSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none text-sm"
+              />
+            </div>
+          </div>
+
+          {(() => {
+            // Filter logs by search term
+            let filteredLogs = activityLogs.filter((log: any) => {
+              const matchesSearch =
+                log.action
+                  ?.toLowerCase()
+                  .includes(logSearchTerm.toLowerCase()) ||
+                log.details
+                  ?.toLowerCase()
+                  .includes(logSearchTerm.toLowerCase()) ||
+                log.adminId?.name
+                  ?.toLowerCase()
+                  .includes(logSearchTerm.toLowerCase()) ||
+                log.adminId?.email
+                  ?.toLowerCase()
+                  .includes(logSearchTerm.toLowerCase());
+
+              return matchesSearch;
+            });
+
+            return filteredLogs.length === 0 ? (
+              <p className="text-center text-gray-500 py-4">
+                {activityLogs.length === 0
+                  ? "No activity logs found."
+                  : "No logs match your search criteria."}
+              </p>
+            ) : (
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                  Showing {filteredLogs.length} of {activityLogs.length} logs
+                </div>
+                {filteredLogs.map((log: any) => (
+                  <div
+                    key={log._id}
+                    className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
+                  >
+                    <div className="flex items-start justify-between mb-1">
+                      <div className="flex-1">
+                        <p className="font-medium">{log.action}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          {log.details}
                         </p>
-                      )}
-                    </div>
-                    <div className="text-right text-xs text-gray-500">
-                      <div>{new Date(log.timestamp).toLocaleDateString()}</div>
-                      <div>{new Date(log.timestamp).toLocaleTimeString()}</div>
+                        {log.adminId && (
+                          <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                            By:{" "}
+                            {log.adminId.name || log.adminId.email || "Unknown"}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right text-xs text-gray-500">
+                        <div>
+                          {new Date(log.timestamp).toLocaleDateString()}
+                        </div>
+                        <div>
+                          {new Date(log.timestamp).toLocaleTimeString()}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            );
+          })()}
         </div>
       </Modal>
 
@@ -1219,80 +1321,132 @@ export default function SuperAdminDashboard() {
         onClose={() => {
           setShowAllUsersModal(false);
           setAllUsers([]);
+          setUserSearchTerm("");
+          setUserFilter("all");
         }}
         title="All Users"
         size="xl"
       >
         <div className="space-y-4">
-          {allUsers.length === 0 ? (
-            <p className="text-center text-gray-500 py-4">No users found.</p>
-          ) : (
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                Total Users: {allUsers.length}
-              </div>
-              {allUsers.map((user: any) => (
-                <div
-                  key={user.id}
-                  className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <p className="font-medium">{user.name}</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {user.email}
-                      </p>
-                      {user.phone && (
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          📱 {user.phone}
-                        </p>
-                      )}
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Event: {user.eventName}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => handleEditUser(user)}
-                        variant="secondary"
-                        className="text-xs px-2 py-1"
-                      >
-                        <Edit className="w-3 h-3" />
-                      </Button>
-                      <Button
-                        onClick={() => handleDeleteUser(user.id)}
-                        variant="danger"
-                        className="text-xs px-2 py-1"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 text-xs">
-                    <span
-                      className={
-                        user.hasTicket
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-gray-600 dark:text-gray-400"
-                      }
-                    >
-                      {user.hasTicket ? "✓ Has Ticket" : "⏳ No Ticket"}
-                    </span>
-                    {user.hasTicket && (
-                      <>
-                        <span className="text-gray-500">
-                          Payment: {user.ticketStatus}
-                        </span>
-                        <span className="text-gray-500">
-                          Scan: {user.scanStatus}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))}
+          {/* Search and Filter */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search by name, email, phone, or event..."
+                value={userSearchTerm}
+                onChange={(e) => setUserSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none text-sm"
+              />
             </div>
-          )}
+            <select
+              value={userFilter}
+              onChange={(e) => setUserFilter(e.target.value)}
+              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none text-sm"
+            >
+              <option value="all">All Users</option>
+              <option value="with-ticket">With Ticket</option>
+              <option value="without-ticket">Without Ticket</option>
+            </select>
+          </div>
+
+          {(() => {
+            // Filter and search logic
+            let filteredUsers = allUsers.filter((user: any) => {
+              const matchesSearch =
+                user.name
+                  ?.toLowerCase()
+                  .includes(userSearchTerm.toLowerCase()) ||
+                user.email
+                  ?.toLowerCase()
+                  .includes(userSearchTerm.toLowerCase()) ||
+                user.phone?.includes(userSearchTerm) ||
+                user.eventName
+                  ?.toLowerCase()
+                  .includes(userSearchTerm.toLowerCase());
+
+              const matchesFilter =
+                userFilter === "all" ||
+                (userFilter === "with-ticket" && user.hasTicket) ||
+                (userFilter === "without-ticket" && !user.hasTicket);
+
+              return matchesSearch && matchesFilter;
+            });
+
+            return filteredUsers.length === 0 ? (
+              <p className="text-center text-gray-500 py-4">
+                {allUsers.length === 0
+                  ? "No users found."
+                  : "No users match your search criteria."}
+              </p>
+            ) : (
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                  Showing {filteredUsers.length} of {allUsers.length} users
+                </div>
+                {filteredUsers.map((user: any) => (
+                  <div
+                    key={user.id}
+                    className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <p className="font-medium">{user.name}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          {user.email}
+                        </p>
+                        {user.phone && (
+                          <p className="text-xs text-gray-600 dark:text-gray-400">
+                            📱 {user.phone}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          Event: {user.eventName}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleEditUser(user)}
+                          variant="secondary"
+                          className="text-xs px-2 py-1"
+                        >
+                          <Edit className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          onClick={() => handleDeleteUser(user.id)}
+                          variant="danger"
+                          className="text-xs px-2 py-1"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs">
+                      <span
+                        className={
+                          user.hasTicket
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-gray-600 dark:text-gray-400"
+                        }
+                      >
+                        {user.hasTicket ? "✓ Has Ticket" : "⏳ No Ticket"}
+                      </span>
+                      {user.hasTicket && (
+                        <>
+                          <span className="text-gray-500">
+                            Payment: {user.ticketStatus}
+                          </span>
+                          <span className="text-gray-500">
+                            Scan: {user.scanStatus}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
         </div>
       </Modal>
 

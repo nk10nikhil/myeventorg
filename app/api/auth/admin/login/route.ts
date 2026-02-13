@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
       id: admin._id.toString(),
       email: admin.email,
       role: "admin",
+      eventIds: admin.eventIds.map((id: any) => id.toString()),
     });
 
     const response = NextResponse.json({

@@ -7,7 +7,8 @@ export interface JWTPayload {
   id: string;
   email: string;
   role: "user" | "admin" | "superadmin";
-  eventId?: string;
+  eventId?: string; // For users
+  eventIds?: string[]; // For admins
 }
 
 export const hashPassword = async (password: string): Promise<string> => {

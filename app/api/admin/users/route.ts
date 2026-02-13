@@ -22,8 +22,20 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Event ID required" }, { status: 400 });
     }
 
+    // Verify admin has access to this event
+    if (admin.eventIds && !admin.eventIds.includes(eventId)) {
+      return NextResponse.json(
+        { error: "Not authorized to view this event" },
+        { status: 403 },
+      );
+    }
+
     // Get all users for this event
     const users = await User.find({ eventId }).select("-password");
+
+    console.log(
+      `[Admin Users] Found ${users.length} users for event ${eventId}`,
+    );
 
     // Get ticket and entry info for each user
     const usersWithTickets = await Promise.all(
@@ -53,6 +65,10 @@ export async function GET(request: NextRequest) {
           })),
         };
       }),
+    );
+
+    console.log(
+      `[Admin Users] Returning ${usersWithTickets.length} users with tickets`,
     );
 
     return NextResponse.json({ users: usersWithTickets });

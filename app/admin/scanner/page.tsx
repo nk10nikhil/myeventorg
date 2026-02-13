@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -25,11 +25,15 @@ export default function AdminScanner() {
   const [gateName, setGateName] = useState("Gate A");
   const [offlineScans, setOfflineScans] = useState<any[]>([]);
   const [scanResult, setScanResult] = useState<any>(null);
+  const [scanFeedback, setScanFeedback] = useState<"success" | "error" | null>(null);
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
   const [syncing, setSyncing] = useState(false);
+  const scannerContainerRef = useRef<HTMLDivElement>(null);
+  const successAudioRef = useRef<HTMLAudioElement | null>(null);
+  const errorAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     checkAuth();
@@ -40,6 +44,14 @@ export default function AdminScanner() {
     if (stored) {
       setOfflineScans(JSON.parse(stored));
     }
+
+    // Initialize audio elements
+    successAudioRef.current = new Audio(
+      "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR4P..."
+    );
+    errorAudioRef.current = new Audio(
+      "data:audio/wav;base64,UklGRmQBAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAATElTVBoAAABJTkZPSVNGVA4AAABMYXZmNTguMjkuMTAwAGRhdGEAAQAAAAEA..."
+    );
 
     // Listen for online/offline events
     window.addEventListener("online", () => setIsOnline(true));
@@ -131,23 +143,59 @@ export default function AdminScanner() {
       console.log("Scan response:", data);
 
       if (data.status === "success") {
+        showImmediateFeedback("success");
         showScanResult(
           "success",
           `Entry granted! Welcome ${data.ticket?.userName || "Guest"}`,
         );
       } else if (data.status === "already-used") {
+        showImmediateFeedback("error");
         showScanResult(
           "error",
           `Already used at ${data.scannedAtGate || "unknown gate"} on ${data.scannedAt ? new Date(data.scannedAt).toLocaleString() : "unknown time"}`,
         );
       } else if (data.status === "invalid") {
+        showImmediateFeedback("error");
         showScanResult("error", "Invalid QR code - Ticket not found");
       } else if (data.status === "expired") {
+        showImmediateFeedback("error");
         showScanResult("error", "QR code expired or not yet valid");
       } else {
+        showImmediateFeedback("error");
         showScanResult("error", data.error || "Entry denied");
       }
     } catch (error: any) {
+      console.error("Online scan error:", error);
+      showImmediateFeedback("error");
+      showScanResult("error", error.message || "Scan failed - Please check connection");
+    }
+  };
+
+  const showImmediateFeedback = (type: "success" | "error") => {
+    // Set feedback state
+    setScanFeedback(type);
+
+    // Play sound
+    if (type === "success" && successAudioRef.current) {
+      successAudioRef.current.play().catch(() => {});
+    } else if (type === "error" && errorAudioRef.current) {
+      errorAudioRef.current.play().catch(() => {});
+    }
+
+    // Vibrate
+    if (navigator.vibrate) {
+      if (type === "success") {
+        navigator.vibrate([200, 100, 200]); // Success pattern
+      } else {
+        navigator.vibrate([500]); // Error pattern
+      }
+    }
+
+    // Clear feedback after animation
+    setTimeout(() => {
+      setScanFeedback(null);
+    }, 1500);
+  };
       console.error("Online scan error:", error);
       showScanResult(
         "error",
@@ -160,6 +208,7 @@ export default function AdminScanner() {
     // Check if already scanned offline
     const exists = offlineScans.find((scan) => scan.qrId === qrId);
     if (exists) {
+      showImmediateFeedback("error");
       showScanResult("error", "Already scanned (offline)");
       return;
     }
@@ -176,6 +225,7 @@ export default function AdminScanner() {
     setOfflineScans(updatedScans);
     localStorage.setItem("offlineScans", JSON.stringify(updatedScans));
 
+    showImmediateFeedback("success");
     showScanResult("success", "Entry granted (offline)");
   };
 
@@ -331,7 +381,16 @@ export default function AdminScanner() {
           </div>
 
           {/* Scanner */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+          <div
+            ref={scannerContainerRef}
+            className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6 transition-all duration-300 ${
+              scanFeedback === "success"
+                ? "border-4 border-green-500 shadow-green-500/50 shadow-2xl"
+                : scanFeedback === "error"
+                  ? "border-4 border-red-500 shadow-red-500/50 shadow-2xl"
+                  : ""
+            }`}
+          >
             <h2 className="text-xl font-bold mb-4">Scan QR Code</h2>
             <QRScanner
               onScan={handleScan}
