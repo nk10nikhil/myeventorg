@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
-import { useTheme } from "next-themes"
+import { useEffect, useRef } from "react";
+import { useTheme } from "next-themes";
 import {
   Chart,
   BarElement,
@@ -13,9 +13,9 @@ import {
   Tooltip,
   Legend,
   ArcElement,
-  Filler
-} from "chart.js"
-import { Bar, Line, Doughnut } from "react-chartjs-2"
+  Filler,
+} from "chart.js";
+import { Bar, Line, Doughnut } from "react-chartjs-2";
 
 // Register ChartJS components
 Chart.register(
@@ -28,26 +28,26 @@ Chart.register(
   Tooltip,
   Legend,
   ArcElement,
-  Filler
-)
+  Filler,
+);
 
 // Get chart colors based on theme
 const useChartColors = (isDark: boolean) => {
   return {
     gridColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
     textColor: isDark ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",
-  }
-}
+  };
+};
 
 interface ChartProps {
-  data: any
+  data: any;
 }
 
 export function BarChart({ data }: ChartProps) {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-  const { gridColor, textColor } = useChartColors(isDark)
-  const chartRef = useRef<Chart | null>(null)
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const { gridColor, textColor } = useChartColors(isDark);
+  const chartRef = useRef<Chart | null>(null);
 
   const options = {
     responsive: true,
@@ -66,7 +66,9 @@ export function BarChart({ data }: ChartProps) {
         },
       },
       tooltip: {
-        backgroundColor: isDark ? "rgba(0, 0, 0, 0.8)" : "rgba(255, 255, 255, 0.8)",
+        backgroundColor: isDark
+          ? "rgba(0, 0, 0, 0.8)"
+          : "rgba(255, 255, 255, 0.8)",
         titleColor: isDark ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)",
         bodyColor: isDark ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",
         borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
@@ -79,7 +81,7 @@ export function BarChart({ data }: ChartProps) {
         },
         titleFont: {
           family: "Inter, sans-serif",
-          weight: "bold",
+          weight: 700 as const,
         },
       },
     },
@@ -114,24 +116,24 @@ export function BarChart({ data }: ChartProps) {
         },
       },
     },
-  }
+  };
 
   useEffect(() => {
     return () => {
       if (chartRef.current) {
-        chartRef.current.destroy()
+        chartRef.current.destroy();
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  return <Bar data={data} options={options} />
+  return <Bar data={data} options={options} />;
 }
 
 export function LineChart({ data }: ChartProps) {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-  const { gridColor, textColor } = useChartColors(isDark)
-  const chartRef = useRef<Chart | null>(null)
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const { gridColor, textColor } = useChartColors(isDark);
+  const chartRef = useRef<Chart | null>(null);
 
   const options = {
     responsive: true,
@@ -150,7 +152,9 @@ export function LineChart({ data }: ChartProps) {
         },
       },
       tooltip: {
-        backgroundColor: isDark ? "rgba(0, 0, 0, 0.8)" : "rgba(255, 255, 255, 0.8)",
+        backgroundColor: isDark
+          ? "rgba(0, 0, 0, 0.8)"
+          : "rgba(255, 255, 255, 0.8)",
         titleColor: isDark ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)",
         bodyColor: isDark ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",
         borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
@@ -163,7 +167,7 @@ export function LineChart({ data }: ChartProps) {
         },
         titleFont: {
           family: "Inter, sans-serif",
-          weight: "bold",
+          weight: 700 as const,
         },
       },
     },
@@ -210,24 +214,24 @@ export function LineChart({ data }: ChartProps) {
         hoverRadius: 5,
       },
     },
-  }
+  };
 
   useEffect(() => {
     return () => {
       if (chartRef.current) {
-        chartRef.current.destroy()
+        chartRef.current.destroy();
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  return <Line data={data} options={options} />
+  return <Line data={data} options={options} />;
 }
 
 export function DoughnutChart({ data }: ChartProps) {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-  const { textColor } = useChartColors(isDark)
-  const chartRef = useRef<Chart | null>(null)
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const { textColor } = useChartColors(isDark);
+  const chartRef = useRef<Chart | null>(null);
 
   const options = {
     responsive: true,
@@ -252,7 +256,9 @@ export function DoughnutChart({ data }: ChartProps) {
         },
       },
       tooltip: {
-        backgroundColor: isDark ? "rgba(0, 0, 0, 0.8)" : "rgba(255, 255, 255, 0.8)",
+        backgroundColor: isDark
+          ? "rgba(0, 0, 0, 0.8)"
+          : "rgba(255, 255, 255, 0.8)",
         titleColor: isDark ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)",
         bodyColor: isDark ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",
         borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
@@ -265,28 +271,31 @@ export function DoughnutChart({ data }: ChartProps) {
         },
         titleFont: {
           family: "Inter, sans-serif",
-          weight: "bold",
+          weight: 700 as const,
         },
         callbacks: {
           label: function (context: any) {
-            const label = context.label || '';
+            const label = context.label || "";
             const value = context.raw || 0;
-            const total = context.dataset.data.reduce((acc: number, data: number) => acc + data, 0);
+            const total = context.dataset.data.reduce(
+              (acc: number, data: number) => acc + data,
+              0,
+            );
             const percentage = Math.round((value / total) * 100);
             return `${label}: ${value} (${percentage}%)`;
-          }
-        }
+          },
+        },
       },
     },
-  }
+  };
 
   useEffect(() => {
     return () => {
       if (chartRef.current) {
-        chartRef.current.destroy()
+        chartRef.current.destroy();
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  return <Doughnut data={data} options={options} />
+  return <Doughnut data={data} options={options} />;
 }

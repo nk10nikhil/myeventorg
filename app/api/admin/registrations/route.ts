@@ -1,23 +1,25 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
-import connectDB from "@/lib/db"
-import Registration from "@/models/Registration"
+import { type NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import connectDB from "@/lib/db";
+import Registration from "@/models/Registration";
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
 
     if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    await connectDB()
+    await connectDB();
 
-    const registrations = await Registration.find({}).sort({ createdAt: -1 }).lean()
+    const registrations = await Registration.find({})
+      .sort({ createdAt: -1 })
+      .lean();
 
     return NextResponse.json(
-      registrations.map((reg) => ({
+      registrations.map((reg: any) => ({
         id: reg._id.toString(),
         name: reg.name,
         email: reg.email,
@@ -26,9 +28,12 @@ export async function GET(req: NextRequest) {
         qrUsed: reg.qrUsed,
         createdAt: reg.createdAt,
       })),
-    )
+    );
   } catch (error) {
-    console.error("Registrations fetch error:", error)
-    return NextResponse.json({ message: "Failed to fetch registrations" }, { status: 500 })
+    console.error("Registrations fetch error:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch registrations" },
+      { status: 500 },
+    );
   }
 }
