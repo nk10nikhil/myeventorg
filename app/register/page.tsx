@@ -60,6 +60,8 @@ function RegisterForm() {
     setLoading(true);
 
     try {
+      console.log("[Register] Starting registration for:", formData.email);
+
       // Register user
       const registerRes = await fetch("/api/auth/register", {
         method: "POST",
@@ -76,9 +78,12 @@ function RegisterForm() {
         throw new Error(registerData.error || "Registration failed");
       }
 
+      console.log("[Register] User registered:", registerData.user.id);
+
       // Proceed to payment
-      initiatePayment(registerData.user.id);
+      await initiatePayment(registerData.user.id);
     } catch (error: any) {
+      console.error("[Register] Registration error:", error);
       setToast({ message: error.message, type: "error" });
       setLoading(false);
     }
@@ -86,6 +91,19 @@ function RegisterForm() {
 
   const initiatePayment = async (userId: string) => {
     try {
+      console.log("[Payment] Initiating payment for user:", userId);
+
+      if (!event) {
+        throw new Error("Event details not loaded");
+      }
+
+      console.log(
+        "[Payment] Event loaded:",
+        event.name,
+        "Price:",
+        event.ticketPrice,
+      );
+
       // Create Razorpay order
       const orderRes = await fetch("/api/payment/create-order", {
         method: "POST",
@@ -99,55 +117,81 @@ function RegisterForm() {
         throw new Error(orderData.error || "Failed to create order");
       }
 
-      // Test mode - skip Razorpay and directly verify
-      if (orderData.testMode) {
-        setToast({ message: "Test mode: Simulating payment...", type: "info" });
-        await verifyPayment(
-          orderData.orderId,
-          `test_payment_${Date.now()}`,
-          `test_signature_${Date.now()}`,
-          userId,
-        );
-        return;
-      }
+      // Check if Razorpay script is already loaded
+      const loadRazorpay = () => {
+        return new Promise((resolve, reject) => {
+          // Check if already loaded
+          if ((window as any).Razorpay) {
+            resolve(true);
+            return;
+          }
 
-      // Load Razorpay script
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.async = true;
-      document.body.appendChild(script);
+          // Check if script already exists
+          const existingScript = document.querySelector(
+            'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
+          );
 
-      script.onload = () => {
-        const options = {
-          key: orderData.key,
-          amount: orderData.amount,
-          currency: orderData.currency,
-          order_id: orderData.orderId,
-          name: event?.name || "Event Ticket",
-          description: "Event Registration",
-          handler: async (response: any) => {
+          if (existingScript) {
+            existingScript.addEventListener("load", () => resolve(true));
+            existingScript.addEventListener("error", () =>
+              reject(new Error("Failed to load Razorpay")),
+            );
+            return;
+          }
+
+          // Load new script
+          const script = document.createElement("script");
+          script.src = "https://checkout.razorpay.com/v1/checkout.js";
+          script.async = true;
+          script.onload = () => resolve(true);
+          script.onerror = () => reject(new Error("Failed to load Razorpay"));
+          document.body.appendChild(script);
+        });
+      };
+
+      await loadRazorpay();
+
+      const options = {
+        key: orderData.key,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        order_id: orderData.orderId,
+        name: event.name,
+        description: "Event Registration",
+        image: "/logo.png", // Optional: add your logo
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        handler: async (response: any) => {
+          try {
             await verifyPayment(
               response.razorpay_order_id,
               response.razorpay_payment_id,
               response.razorpay_signature,
               userId,
             );
+          } catch (err: any) {
+            setToast({ message: err.message, type: "error" });
+            setLoading(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setLoading(false);
+            setToast({ message: "Payment cancelled", type: "info" });
           },
-          modal: {
-            ondismiss: () => {
-              setLoading(false);
-              setToast({ message: "Payment cancelled", type: "info" });
-            },
-          },
-          theme: {
-            color: "#4f46e5",
-          },
-        };
-
-        const razorpay = new (window as any).Razorpay(options);
-        razorpay.open();
+        },
+        theme: {
+          color: "#4f46e5",
+        },
       };
+
+      const razorpay = new (window as any).Razorpay(options);
+      razorpay.open();
     } catch (error: any) {
+      console.error("Payment initiation error:", error);
       setToast({
         message: error.message || "Failed to initiate payment",
         type: "error",
@@ -163,6 +207,10 @@ function RegisterForm() {
     userId: string,
   ) => {
     try {
+      if (!event) {
+        throw new Error("Event details not found");
+      }
+
       const res = await fetch("/api/payment/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -183,15 +231,18 @@ function RegisterForm() {
       }
 
       setToast({
-        message: "Registration successful! Redirecting...",
+        message: "Payment successful! Ticket generated. Redirecting...",
         type: "success",
       });
       setTimeout(() => {
         router.push("/dashboard");
       }, 2000);
     } catch (error: any) {
-      setToast({ message: error.message, type: "error" });
-    } finally {
+      console.error("Payment verification error:", error);
+      setToast({
+        message: error.message || "Payment verification failed",
+        type: "error",
+      });
       setLoading(false);
     }
   };

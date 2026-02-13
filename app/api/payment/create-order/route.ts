@@ -8,26 +8,30 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const { eventId, userId } = await request.json();
+    console.log("[Payment] Creating order for:", { eventId, userId });
 
     const event = await Event.findById(eventId);
 
     if (!event) {
+      console.error("[Payment] Event not found:", eventId);
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
-    // Test mode - bypass Razorpay
-    if (process.env.RAZORPAY_TEST_MODE === "true") {
-      return NextResponse.json({
-        orderId: `test_order_${Date.now()}`,
-        amount: event.ticketPrice * 100,
-        currency: "INR",
-        key: "test_key",
-        testMode: true,
-      });
-    }
+    console.log("[Payment] Event found:", {
+      name: event.name,
+      price: event.ticketPrice,
+    });
+    console.log("[Payment] Razorpay keys configured:", {
+      key_id: process.env.RAZORPAY_KEY_ID ? "Yes" : "No",
+      key_secret: process.env.RAZORPAY_KEY_SECRET ? "Yes" : "No",
+    });
 
-    const receiptId = `receipt_${userId}_${Date.now()}`;
+    // Generate receipt ID (max 40 chars for Razorpay)
+    // Format: rcpt_<last10charsOfUserId>_<timestamp>
+    const receiptId = `rcpt_${userId.slice(-10)}_${Date.now()}`;
     const order = await createRazorpayOrder(event.ticketPrice, receiptId);
+
+    console.log("[Payment] Order created successfully:", order.id);
 
     return NextResponse.json({
       orderId: order.id,
@@ -36,7 +40,7 @@ export async function POST(request: NextRequest) {
       key: process.env.RAZORPAY_KEY_ID,
     });
   } catch (error: any) {
-    console.error("Create order error:", error);
+    console.error("[Payment] Create order error:", error.message);
     return NextResponse.json(
       { error: error.message || "Failed to create order" },
       { status: 500 },

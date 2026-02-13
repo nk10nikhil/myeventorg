@@ -14,21 +14,20 @@ export async function POST(request: NextRequest) {
     const { orderId, paymentId, signature, userId, eventId, amount } =
       await request.json();
 
-    // Test mode - skip signature verification
-    const isTestMode = orderId?.startsWith("test_order_");
+    console.log("[Payment] Verifying payment:", { orderId, paymentId, userId });
 
-    let isValid = true;
-    if (!isTestMode) {
-      // Verify payment signature for real payments
-      isValid = verifyRazorpaySignature(orderId, paymentId, signature);
-    }
+    // Verify payment signature
+    const isValid = verifyRazorpaySignature(orderId, paymentId, signature);
 
     if (!isValid) {
+      console.error("[Payment] Invalid signature");
       return NextResponse.json(
         { error: "Invalid payment signature" },
         { status: 400 },
       );
     }
+
+    console.log("[Payment] Signature verified, generating QR...");
 
     // Generate QR code
     const qrId = generateQRId();
@@ -46,11 +45,13 @@ export async function POST(request: NextRequest) {
       eventId,
       qrCode,
       qrId,
-      paymentId: isTestMode ? `test_payment_${Date.now()}` : paymentId,
+      paymentId,
       paymentStatus: "completed",
       amount: amount / 100, // Convert paise to rupees
       scanStatus: "unused",
     });
+
+    console.log("[Payment] Ticket created:", ticket._id);
 
     // Get user and event details
     const user = await User.findById(userId);
@@ -67,10 +68,12 @@ export async function POST(request: NextRequest) {
           ticket._id.toString(),
         );
       } catch (emailError) {
-        console.error("Email sending failed:", emailError);
+        console.error("[Payment] Email sending failed:", emailError);
         // Don't fail the whole request if email fails
       }
     }
+
+    console.log("[Payment] Verification complete");
 
     return NextResponse.json({
       message: "Payment verified successfully",
