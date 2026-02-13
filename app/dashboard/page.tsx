@@ -80,7 +80,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen">
       {/* Subtle background */}
-      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-gray-50 via-blue-50/20 to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950" />
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-gray-50 via-gray-100/20 to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950" />
 
       {toast && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
@@ -135,16 +135,16 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-5 sm:p-6 h-full border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-lg transition-all">
+                <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-5 sm:p-6 h-full border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-lg transition-all">
                   {/* Status badge */}
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white truncate">
                       {ticket.eventId?.name || "Event"}
                     </h3>
                     {ticket.scanStatus === "used" ? (
-                      <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 dark:text-gray-300 flex-shrink-0" />
                     ) : (
-                      <XCircle className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 flex-shrink-0" />
+                      <XCircle className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 dark:text-gray-400 flex-shrink-0" />
                     )}
                   </div>
 
@@ -162,8 +162,8 @@ export default function Dashboard() {
                       <span
                         className={`font-semibold ${
                           ticket.scanStatus === "used"
-                            ? "text-green-500"
-                            : "text-yellow-500"
+                            ? "text-gray-700 dark:text-gray-300"
+                            : "text-gray-900 dark:text-white"
                         }`}
                       >
                         {ticket.scanStatus === "used" ? "✓ Used" : "○ Unused"}
@@ -227,8 +227,8 @@ export default function Dashboard() {
             className="text-center py-12 sm:py-16 bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 px-4"
           >
             <div className="max-w-md mx-auto">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-primary-50 dark:bg-primary-950/50 flex items-center justify-center">
-                <QrCodeIcon className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600 dark:text-primary-400" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <QrCodeIcon className="w-8 h-8 sm:w-10 sm:h-10 text-gray-600 dark:text-gray-400" />
               </div>
               <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">
                 No Tickets Yet

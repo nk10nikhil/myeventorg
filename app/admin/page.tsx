@@ -89,9 +89,9 @@ export default function AdminLogin() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", delay: 0.2 }}
-                className="p-3 sm:p-4 bg-purple-100 dark:bg-purple-900/30 rounded-xl sm:rounded-2xl"
+                className="p-3 sm:p-4 bg-gray-100 dark:bg-gray-800 rounded-xl sm:rounded-2xl"
               >
-                <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 dark:text-purple-400" />
+                <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-gray-700 dark:text-gray-300" />
               </motion.div>
               <div>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
@@ -116,7 +116,7 @@ export default function AdminLogin() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
-                           focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 
+                           focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                            outline-none transition-colors text-sm sm:text-base"
                   placeholder="admin@example.com"
                 />
@@ -134,7 +134,7 @@ export default function AdminLogin() {
                     setFormData({ ...formData, password: e.target.value })
                   }
                   className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
-                           focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 
+                           focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                            outline-none transition-colors text-sm sm:text-base"
                   placeholder="••••••••"
                 />

@@ -381,16 +381,16 @@ export default function AdminScanner() {
               exit={{ scale: 0.5, opacity: 0 }}
               className={`p-12 rounded-2xl ${
                 scanResult.status === "success"
-                  ? "bg-green-500 border-8 border-green-400"
-                  : "bg-red-500 border-8 border-red-400"
+                  ? "bg-gray-800 border-8 border-gray-700 dark:bg-gray-200 dark:border-gray-300"
+                  : "bg-gray-900 border-8 border-gray-800 dark:bg-gray-300 dark:border-gray-400"
               } shadow-2xl`}
             >
               {scanResult.status === "success" ? (
-                <CheckCircle2 className="w-32 h-32 text-white mx-auto mb-4" />
+                <CheckCircle2 className="w-32 h-32 text-white dark:text-black mx-auto mb-4" />
               ) : (
-                <XCircle className="w-32 h-32 text-white mx-auto mb-4" />
+                <XCircle className="w-32 h-32 text-white dark:text-black mx-auto mb-4" />
               )}
-              <p className="text-3xl font-bold text-white text-center">
+              <p className="text-3xl font-bold text-white dark:text-black text-center">
                 {scanResult.message}
               </p>
             </motion.div>
@@ -404,19 +404,19 @@ export default function AdminScanner() {
           <div className="flex items-center justify-between">
             <button
               onClick={() => router.push("/admin/dashboard")}
-              className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
             >
               <ArrowLeft className="w-5 h-5" />
               Back to Dashboard
             </button>
             <div className="flex items-center gap-4">
               {isOnline ? (
-                <div className="flex items-center gap-2 text-green-500">
+                <div className="flex items-center gap-2 text-gray-900 dark:text-white">
                   <Wifi className="w-5 h-5" />
                   <span className="text-sm font-medium">Online</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 text-orange-500">
+                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                   <WifiOff className="w-5 h-5" />
                   <span className="text-sm font-medium">Offline</span>
                 </div>
@@ -514,8 +514,8 @@ export default function AdminScanner() {
           )}
 
           {isOnline && offlineScans.length > 0 && (
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
-              <p className="text-yellow-800 dark:text-yellow-200 mb-3">
+            <div className="bg-gray-100 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-xl p-4">
+              <p className="text-gray-800 dark:text-gray-200 mb-3">
                 You have {offlineScans.length} offline scan(s) pending sync
               </p>
               <Button

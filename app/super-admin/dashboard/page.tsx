@@ -499,7 +499,7 @@ export default function SuperAdminDashboard() {
       )}
 
       {/* Header */}
-      <header className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+      <header className="bg-gradient-to-r from-gray-800 to-black dark:from-gray-700 dark:to-gray-900 text-white">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -529,25 +529,25 @@ export default function SuperAdminDashboard() {
               label: "Total Events",
               value: events.length,
               icon: <Calendar className="w-6 h-6" />,
-              color: "bg-blue-500",
+              color: "bg-gray-700",
             },
             {
               label: "Total Admins",
               value: admins.length,
               icon: <Shield className="w-6 h-6" />,
-              color: "bg-green-500",
+              color: "bg-gray-800",
             },
             {
               label: "Total Users",
               value: analytics.reduce((sum, a) => sum + a.totalUsers, 0),
               icon: <Users className="w-6 h-6" />,
-              color: "bg-purple-500",
+              color: "bg-gray-600",
             },
             {
               label: "Total Revenue",
               value: `₹${analytics.reduce((sum, a) => sum + a.revenue, 0)}`,
               icon: <BarChart3 className="w-6 h-6" />,
-              color: "bg-orange-500",
+              color: "bg-gray-900",
             },
           ].map((stat, index) => (
             <motion.div
@@ -621,14 +621,14 @@ export default function SuperAdminDashboard() {
                   <div className="flex gap-1">
                     <button
                       onClick={() => handleEditEvent(event)}
-                      className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 rounded-lg transition-colors"
+                      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
                       aria-label="Edit event"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteEvent(event._id)}
-                      className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 rounded-lg transition-colors"
+                      className="p-2 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg transition-colors"
                       aria-label="Delete event"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -688,14 +688,14 @@ export default function SuperAdminDashboard() {
                 <div className="flex gap-1">
                   <button
                     onClick={() => handleEditAdmin(admin)}
-                    className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 rounded-lg transition-colors"
+                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
                     aria-label="Edit admin"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteAdmin(admin._id)}
-                    className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 rounded-lg transition-colors"
+                    className="p-2 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg transition-colors"
                     aria-label="Delete admin"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -720,19 +720,19 @@ export default function SuperAdminDashboard() {
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <span className="text-sm font-medium">Users Checked In</span>
-                <span className="text-lg font-bold text-green-600">
+                <span className="text-lg font-bold text-gray-900 dark:text-white">
                   {analytics.reduce((sum, a) => sum + a.checkedIn, 0)}
                 </span>
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <span className="text-sm font-medium">Pending Check-ins</span>
-                <span className="text-lg font-bold text-orange-600">
+                <span className="text-lg font-bold text-gray-800 dark:text-gray-200">
                   {analytics.reduce((sum, a) => sum + a.remaining, 0)}
                 </span>
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <span className="text-sm font-medium">Avg Check-in Rate</span>
-                <span className="text-lg font-bold text-blue-600">
+                <span className="text-lg font-bold text-gray-700 dark:text-gray-300">
                   {analytics.length > 0
                     ? (
                         analytics.reduce((sum, a) => sum + a.checkInRate, 0) /
@@ -1054,8 +1054,8 @@ export default function SuperAdminDashboard() {
                             <span
                               className={
                                 user.ticket.paymentStatus === "completed"
-                                  ? "text-green-600"
-                                  : "text-yellow-600"
+                                  ? "text-gray-900 dark:text-white"
+                                  : "text-gray-600 dark:text-gray-400"
                               }
                             >
                               {user.ticket.paymentStatus}
@@ -1066,7 +1066,7 @@ export default function SuperAdminDashboard() {
                             <span
                               className={
                                 user.ticket.scanStatus === "used"
-                                  ? "text-blue-600"
+                                  ? "text-gray-800 dark:text-gray-200"
                                   : "text-gray-600"
                               }
                             >
@@ -1184,8 +1184,8 @@ export default function SuperAdminDashboard() {
                         <span
                           className={`text-xs px-2 py-1 rounded ${
                             ticket.paymentStatus === "completed"
-                              ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                              : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
+                              ? "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                              : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
                           }`}
                         >
                           {ticket.paymentStatus}
@@ -1196,7 +1196,7 @@ export default function SuperAdminDashboard() {
                       <span
                         className={
                           ticket.scanStatus === "used"
-                            ? "text-blue-600 dark:text-blue-400"
+                            ? "text-gray-900 dark:text-white"
                             : "text-gray-600 dark:text-gray-400"
                         }
                       >
@@ -1425,7 +1425,7 @@ export default function SuperAdminDashboard() {
                       <span
                         className={
                           user.hasTicket
-                            ? "text-green-600 dark:text-green-400"
+                            ? "text-gray-900 dark:text-white"
                             : "text-gray-600 dark:text-gray-400"
                         }
                       >

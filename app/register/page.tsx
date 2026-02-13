@@ -184,7 +184,7 @@ function RegisterForm() {
           },
         },
         theme: {
-          color: "#4f46e5",
+          color: "#374151",
         },
       };
 
@@ -269,7 +269,7 @@ function RegisterForm() {
           whileHover={{ x: -4 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 mb-6 text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors"
+          className="flex items-center gap-2 mb-6 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to home
@@ -304,7 +304,7 @@ function RegisterForm() {
                     </p>
                   </div>
                   <div className="text-left sm:text-right">
-                    <div className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400">
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                       ₹{event.ticketPrice}
                     </div>
                     <p className="text-xs text-gray-500">per ticket</p>
@@ -327,7 +327,7 @@ function RegisterForm() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
-                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                              outline-none transition-colors text-sm sm:text-base"
                     placeholder="John Doe"
                   />
@@ -345,7 +345,7 @@ function RegisterForm() {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
-                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                              outline-none transition-colors text-sm sm:text-base"
                     placeholder="john@example.com"
                   />
@@ -363,7 +363,7 @@ function RegisterForm() {
                       setFormData({ ...formData, phone: e.target.value })
                     }
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
-                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                              outline-none transition-colors text-sm sm:text-base"
                     placeholder="+91 1234567890"
                   />
@@ -381,7 +381,7 @@ function RegisterForm() {
                       setFormData({ ...formData, dateOfBirth: e.target.value })
                     }
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
-                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                              outline-none transition-colors text-sm sm:text-base"
                     aria-label="Date of birth"
                   />
@@ -399,7 +399,7 @@ function RegisterForm() {
                       setFormData({ ...formData, password: e.target.value })
                     }
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
-                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                              outline-none transition-colors text-sm sm:text-base"
                     placeholder="••••••••"
                   />
@@ -420,7 +420,7 @@ function RegisterForm() {
                       })
                     }
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800
-                             focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                             focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                              outline-none transition-colors text-sm sm:text-base"
                     placeholder="••••••••"
                   />
@@ -442,7 +442,7 @@ function RegisterForm() {
                 Already have an account?{" "}
                 <button
                   onClick={() => router.push("/login")}
-                  className="text-primary-600 dark:text-primary-400 hover:underline"
+                  className="text-gray-700 dark:text-gray-300 hover:underline"
                 >
                   Login here
                 </button>

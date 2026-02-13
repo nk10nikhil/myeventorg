@@ -74,7 +74,7 @@ function LoginForm() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
       {/* Subtle background gradient */}
-      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950" />
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-gray-50 via-gray-100/30 to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950" />
 
       <div className="absolute top-4 right-4">
         <ThemeToggle />
@@ -123,7 +123,7 @@ function LoginForm() {
                     setFormData({ ...formData, eventId: e.target.value })
                   }
                   className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900
-                           focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                           focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                            outline-none transition-all text-sm sm:text-base"
                   aria-label="Select event"
                 >
@@ -148,7 +148,7 @@ function LoginForm() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900
-                           focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                           focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                            outline-none transition-all text-sm sm:text-base"
                   placeholder="john@example.com"
                 />
@@ -166,7 +166,7 @@ function LoginForm() {
                     setFormData({ ...formData, password: e.target.value })
                   }
                   className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900
-                           focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 
+                           focus:border-gray-500 dark:focus:border-gray-400 focus:ring-2 focus:ring-gray-500/20 
                            outline-none transition-all text-sm sm:text-base"
                   placeholder="••••••••"
                 />
@@ -182,7 +182,7 @@ function LoginForm() {
                 Don't have an account?{" "}
                 <button
                   onClick={() => router.push("/register")}
-                  className="font-medium text-primary-600 dark:text-primary-400 hover:underline"
+                  className="font-medium text-gray-700 dark:text-gray-300 hover:underline"
                 >
                   Register now
                 </button>

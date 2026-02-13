@@ -210,25 +210,25 @@ export default function AdminDashboard() {
               label: "Total Registered",
               value: stats.totalRegistered || 0,
               icon: <Users className="w-6 h-6" />,
-              color: "bg-blue-500",
+              color: "bg-gray-700",
             },
             {
               label: "Total Tickets",
               value: stats.totalTickets || 0,
               icon: <CheckCircle className="w-6 h-6" />,
-              color: "bg-green-500",
+              color: "bg-gray-800",
             },
             {
               label: "Checked In",
               value: stats.checkedIn || 0,
               icon: <Activity className="w-6 h-6" />,
-              color: "bg-purple-500",
+              color: "bg-gray-600",
             },
             {
               label: "Remaining",
               value: stats.remaining || 0,
               icon: <Clock className="w-6 h-6" />,
-              color: "bg-orange-500",
+              color: "bg-gray-900",
             },
           ].map((stat, index) => (
             <motion.div
@@ -269,7 +269,7 @@ export default function AdminDashboard() {
                     {new Date(entry.entryTime).toLocaleString()}
                   </p>
                 </div>
-                <CheckCircle className="w-5 h-5 text-green-500" />
+                <CheckCircle className="w-5 h-5 text-gray-700 dark:text-gray-300" />
               </div>
             ))}
           </div>
@@ -325,8 +325,8 @@ export default function AdminDashboard() {
                       <span
                         className={`px-2 py-1 rounded-full text-xs ${
                           user.ticket?.scanStatus === "used"
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                            ? "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                            : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
                         }`}
                       >
                         {user.ticket?.scanStatus || "No Ticket"}
@@ -351,7 +351,7 @@ export default function AdminDashboard() {
                             setActionUser({ ...user, action: "delete" });
                             setShowConfirmModal(true);
                           }}
-                          className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 rounded-lg transition-colors"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
                           title="Delete User"
                         >
                           <Trash2 className="w-4 h-4" />

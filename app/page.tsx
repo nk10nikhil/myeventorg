@@ -48,12 +48,12 @@ export default function Home() {
     <div className="min-h-screen relative overflow-hidden">
       {/* Animated background gradients */}
       <div className="fixed inset-0 -z-10">
-        <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-primary-500/20 dark:bg-primary-500/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-gray-400/10 dark:bg-gray-600/5 rounded-full blur-3xl animate-float" />
         <div
-          className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-secondary-500/20 dark:bg-secondary-500/10 rounded-full blur-3xl animate-float"
+          className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-gray-500/10 dark:bg-gray-700/5 rounded-full blur-3xl animate-float"
           style={{ animationDelay: "2s" }}
         />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-accent-500/20 dark:bg-accent-500/10 rounded-full blur-3xl animate-pulse-slow" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-gray-300/10 dark:bg-gray-800/5 rounded-full blur-3xl animate-pulse-slow" />
       </div>
 
       {/* Header */}
@@ -66,7 +66,7 @@ export default function Home() {
               className="flex items-center gap-2 sm:gap-3 cursor-pointer"
               onClick={() => router.push("/")}
             >
-              <QrCode className="w-6 h-6 sm:w-7 sm:h-7 text-primary-500" />
+              <QrCode className="w-6 h-6 sm:w-7 sm:h-7 text-gray-900 dark:text-white" />
               <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
                 QR Ticketing
               </h1>
@@ -164,9 +164,9 @@ export default function Home() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-primary-50 dark:bg-primary-950/50 border border-primary-200 dark:border-primary-800 rounded-full mb-6 sm:mb-8"
+              className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full mb-6 sm:mb-8"
             >
-              <span className="text-xs sm:text-sm font-medium text-primary-700 dark:text-primary-300">
+              <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                 Modern Event Management
               </span>
             </motion.div>
@@ -174,7 +174,7 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-gray-900 dark:text-white">
               Event Ticketing
               <br className="hidden sm:block" />
-              <span className="text-primary-600 dark:text-primary-400">
+              <span className="text-gray-700 dark:text-gray-300">
                 {" "}
                 Made Simple
               </span>
@@ -218,7 +218,7 @@ export default function Home() {
                 { value: "< 2s", label: "Scan" },
               ].map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-600 dark:text-primary-400">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                     {stat.value}
                   </div>
                   <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -294,9 +294,9 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
               >
-                <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-5 sm:p-6 h-full border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 transition-all hover:shadow-lg">
+                <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-5 sm:p-6 h-full border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600 transition-all hover:shadow-lg">
                   <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                    <div className="p-2 sm:p-3 bg-primary-50 dark:bg-primary-950/50 rounded-lg sm:rounded-xl text-primary-600 dark:text-primary-400">
+                    <div className="p-2 sm:p-3 bg-gray-100 dark:bg-gray-800 rounded-lg sm:rounded-xl text-gray-900 dark:text-white">
                       {feature.icon}
                     </div>
                     <h4 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
@@ -340,9 +340,9 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl overflow-hidden h-full flex flex-col border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-lg transition-all">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl overflow-hidden h-full flex flex-col border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-lg transition-all">
                     {/* Event header */}
-                    <div className="h-24 sm:h-28 bg-gradient-to-br from-primary-500 to-primary-600 relative flex items-end p-4 sm:p-5">
+                    <div className="h-24 sm:h-28 bg-gradient-to-br from-gray-700 to-gray-900 dark:from-gray-600 dark:to-gray-800 relative flex items-end p-4 sm:p-5">
                       <div className="inline-flex px-2.5 sm:px-3 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-gray-900 text-xs sm:text-sm font-semibold">
                         {new Date(event.startDate).toLocaleDateString("en-US", {
                           month: "short",
@@ -361,7 +361,7 @@ export default function Home() {
 
                       <div className="space-y-2 text-sm mb-4 sm:mb-5">
                         <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                          <QrCode className="w-4 h-4 text-primary-500 flex-shrink-0" />
+                          <QrCode className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" />
                           <span className="truncate">{event.venue}</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
@@ -370,7 +370,7 @@ export default function Home() {
                             {new Date(event.startDate).toLocaleDateString()}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 font-bold text-primary-600 dark:text-primary-400">
+                        <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
                           <Ticket className="w-4 h-4 flex-shrink-0" />
                           <span>₹{event.ticketPrice}</span>
                         </div>
@@ -408,7 +408,7 @@ export default function Home() {
       <footer className="border-t border-gray-200 dark:border-gray-800 py-8 sm:py-10 px-4 mt-12 sm:mt-16 md:mt-20">
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <QrCode className="w-5 h-5 sm:w-6 sm:h-6 text-primary-500" />
+            <QrCode className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" />
             <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
               QR Ticketing
             </span>

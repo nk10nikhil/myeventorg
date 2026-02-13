@@ -72,7 +72,7 @@ export default function SuperAdminLogin() {
           whileHover={{ x: -4 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 mb-6 text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors"
+          className="flex items-center gap-2 mb-6 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to home
@@ -80,8 +80,8 @@ export default function SuperAdminLogin() {
 
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl sm:rounded-2xl shadow-sm p-6 sm:p-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl">
-              <Crown className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+            <div className="p-3 bg-gray-800 dark:bg-gray-200 rounded-xl">
+              <Crown className="w-7 h-7 sm:w-8 sm:h-8 text-white dark:text-black" />
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
@@ -106,7 +106,7 @@ export default function SuperAdminLogin() {
                   setFormData({ ...formData, email: e.target.value })
                 }
                 className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 
-                           focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-colors text-sm sm:text-base"
+                           focus:ring-2 focus:ring-gray-500/20 focus:border-gray-500 dark:focus:border-gray-400 outline-none transition-colors text-sm sm:text-base"
                 placeholder="superadmin@example.com"
               />
             </div>
@@ -123,7 +123,7 @@ export default function SuperAdminLogin() {
                   setFormData({ ...formData, password: e.target.value })
                 }
                 className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 
-                           focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-colors text-sm sm:text-base"
+                           focus:ring-2 focus:ring-gray-500/20 focus:border-gray-500 dark:focus:border-gray-400 outline-none transition-colors text-sm sm:text-base"
                 placeholder="••••••••"
               />
             </div>
@@ -140,8 +140,8 @@ export default function SuperAdminLogin() {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-            <p className="text-xs sm:text-sm text-yellow-800 dark:text-yellow-200">
+          <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg">
+            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
               <strong>Default Credentials:</strong>
               <br />
               Email: nk10nikhil@gmail.com

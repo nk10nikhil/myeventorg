@@ -27,12 +27,13 @@ export default function Button({
 }: ButtonProps) {
   const variants = {
     primary:
-      "bg-primary-600 hover:bg-primary-700 text-white shadow-sm hover:shadow-md",
+      "bg-gray-900 hover:bg-black dark:bg-gray-100 dark:hover:bg-white text-white dark:text-black shadow-sm hover:shadow-md",
     secondary:
-      "bg-secondary-600 hover:bg-secondary-700 text-white shadow-sm hover:shadow-md",
-    danger: "bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-md",
+      "bg-gray-700 hover:bg-gray-800 dark:bg-gray-300 dark:hover:bg-gray-200 text-white dark:text-black shadow-sm hover:shadow-md",
+    danger:
+      "bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-100 text-white dark:text-black shadow-sm hover:shadow-md",
     success:
-      "bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow-md",
+      "bg-gray-700 hover:bg-gray-800 dark:bg-gray-300 dark:hover:bg-gray-200 text-white dark:text-black shadow-sm hover:shadow-md",
     outline:
       "border-2 border-gray-300 dark:border-gray-600 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300",
     ghost:

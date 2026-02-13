@@ -11,17 +11,17 @@ interface ToastProps {
 
 export default function Toast({ message, type, onClose }: ToastProps) {
   const icons = {
-    success: <CheckCircle className="w-5 h-5 text-green-500" />,
-    error: <AlertCircle className="w-5 h-5 text-red-500" />,
-    info: <Info className="w-5 h-5 text-blue-500" />,
+    success: <CheckCircle className="w-5 h-5 text-gray-900 dark:text-white" />,
+    error: <AlertCircle className="w-5 h-5 text-gray-800 dark:text-gray-200" />,
+    info: <Info className="w-5 h-5 text-gray-700 dark:text-gray-300" />,
   };
 
   const colors = {
     success:
-      "bg-green-50/90 dark:bg-green-900/30 border-green-300 dark:border-green-700/50 shadow-green-500/20",
+      "bg-gray-100/90 dark:bg-gray-800/30 border-gray-300 dark:border-gray-700/50 shadow-gray-500/20",
     error:
-      "bg-red-50/90 dark:bg-red-900/30 border-red-300 dark:border-red-700/50 shadow-red-500/20",
-    info: "bg-blue-50/90 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700/50 shadow-blue-500/20",
+      "bg-gray-200/90 dark:bg-gray-700/30 border-gray-400 dark:border-gray-600/50 shadow-gray-500/20",
+    info: "bg-gray-50/90 dark:bg-gray-900/30 border-gray-300 dark:border-gray-800/50 shadow-gray-500/20",
   };
 
   return (

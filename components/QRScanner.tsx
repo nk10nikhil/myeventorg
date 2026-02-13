@@ -151,14 +151,14 @@ export default function QRScanner({ onScan, onError }: QRScannerProps) {
   if (permissionError) {
     return (
       <div className="space-y-4">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <div className="bg-gray-100 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-gray-700 dark:text-gray-300 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-medium text-red-800 dark:text-red-200 mb-1">
+              <h3 className="font-medium text-gray-900 dark:text-white mb-1">
                 Camera Access Required
               </h3>
-              <p className="text-sm text-red-700 dark:text-red-300">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
                 {permissionError}
               </p>
             </div>
