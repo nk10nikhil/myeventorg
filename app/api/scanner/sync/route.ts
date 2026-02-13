@@ -23,6 +23,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log(
+      `[Sync] Starting sync of ${offlineScans.length} offline scans for admin ${admin.id}`,
+    );
+
     const results = {
       synced: [],
       failed: [],
@@ -33,21 +37,32 @@ export async function POST(request: NextRequest) {
       try {
         const { qrId, gateName, scannedAt, deviceInfo } = scan;
 
+        if (!qrId || !gateName || !scannedAt) {
+          results.failed.push({
+            qrId: qrId || "unknown",
+            reason: "Missing required fields",
+          });
+          continue;
+        }
+
         // Check if ticket exists
-        const ticket = await Ticket.findOne({ qrId });
+        const ticket = await Ticket.findOne({ qrId }).populate("eventId");
 
         if (!ticket) {
+          console.log(`[Sync] Ticket not found: ${qrId}`);
           results.failed.push({ qrId, reason: "Ticket not found" });
           continue;
         }
 
-        // Check if already synced
+        // Check if already synced (exact match by time and gate)
         const existingEntry = await Entry.findOne({
           ticketId: ticket._id,
           entryTime: new Date(scannedAt),
+          gateName: gateName,
         });
 
         if (existingEntry) {
+          console.log(`[Sync] Duplicate entry: ${qrId}`);
           results.duplicates.push({ qrId, reason: "Already synced" });
           continue;
         }
@@ -55,11 +70,15 @@ export async function POST(request: NextRequest) {
         // Check if ticket was already used before this offline scan
         if (
           ticket.scanStatus === "used" &&
-          ticket.scannedAt! < new Date(scannedAt)
+          ticket.scannedAt &&
+          ticket.scannedAt < new Date(scannedAt)
         ) {
+          console.log(
+            `[Sync] Ticket ${qrId} was already used at ${ticket.scannedAtGate} before this offline scan`,
+          );
           results.duplicates.push({
             qrId,
-            reason: "Ticket already used at different location",
+            reason: `Already used at ${ticket.scannedAtGate}`,
           });
           continue;
         }
@@ -71,6 +90,7 @@ export async function POST(request: NextRequest) {
           ticket.scannedBy = admin.id as any;
           ticket.scannedAtGate = gateName;
           await ticket.save();
+          console.log(`[Sync] Updated ticket status: ${qrId}`);
         }
 
         // Create entry record
@@ -86,11 +106,17 @@ export async function POST(request: NextRequest) {
           deviceInfo,
         });
 
+        console.log(`[Sync] Created entry for: ${qrId}`);
         results.synced.push({ qrId });
       } catch (error) {
+        console.error(`[Sync] Error processing scan ${scan.qrId}:`, error);
         results.failed.push({ qrId: scan.qrId, reason: "Sync error" });
       }
     }
+
+    console.log(
+      `[Sync] Complete - Synced: ${results.synced.length}, Failed: ${results.failed.length}, Duplicates: ${results.duplicates.length}`,
+    );
 
     return NextResponse.json({
       message: "Sync completed",

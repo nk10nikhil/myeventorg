@@ -56,12 +56,40 @@ export default function AdminScanner() {
     );
 
     // Listen for online/offline events
-    window.addEventListener("online", () => setIsOnline(true));
-    window.addEventListener("offline", () => setIsOnline(false));
+    const handleOnline = () => {
+      setIsOnline(true);
+      // Auto-sync when coming back online
+      const stored = localStorage.getItem("offlineScans");
+      if (stored) {
+        const scans = JSON.parse(stored);
+        if (scans.length > 0) {
+          setToast({
+            message: `Connection restored! ${scans.length} offline scan(s) will be synced automatically.`,
+            type: "info",
+          });
+          // Auto-sync after 2 seconds
+          setTimeout(() => {
+            syncOfflineScans();
+          }, 2000);
+        }
+      }
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      setToast({
+        message:
+          "Connection lost. Scans will be saved locally and synced when online.",
+        type: "info",
+      });
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener("online", () => setIsOnline(true));
-      window.removeEventListener("offline", () => setIsOnline(false));
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
@@ -211,20 +239,30 @@ export default function AdminScanner() {
       return;
     }
 
+    // Basic validation
+    if (!qrId || qrId.length < 10) {
+      showImmediateFeedback("error");
+      showScanResult("error", "Invalid QR code format");
+      return;
+    }
+
     // Store offline scan
     const scan = {
       qrId,
       gateName,
       scannedAt: new Date().toISOString(),
       deviceInfo: navigator.userAgent,
+      adminId: admin?.id || "unknown",
     };
 
     const updatedScans = [...offlineScans, scan];
     setOfflineScans(updatedScans);
     localStorage.setItem("offlineScans", JSON.stringify(updatedScans));
 
+    console.log(`[Offline Scan] Saved: ${qrId} at ${scan.scannedAt}`);
+
     showImmediateFeedback("success");
-    showScanResult("success", "Entry granted (offline)");
+    showScanResult("success", `Entry granted (offline)\nScan saved locally`);
   };
 
   const showScanResult = (status: "success" | "error", message: string) => {
@@ -267,18 +305,50 @@ export default function AdminScanner() {
         body: JSON.stringify({ offlineScans }),
       });
 
+      if (!res.ok) {
+        throw new Error("Sync request failed");
+      }
+
       const data = await res.json();
 
+      // Build detailed message
+      const syncedCount = data.results.synced.length;
+      const failedCount = data.results.failed.length;
+      const duplicateCount = data.results.duplicates.length;
+
+      let message = `Sync complete: ${syncedCount} successful`;
+      if (duplicateCount > 0) {
+        message += `, ${duplicateCount} duplicate(s) skipped`;
+      }
+      if (failedCount > 0) {
+        message += `, ${failedCount} failed`;
+      }
+
       setToast({
-        message: `Synced ${data.results.synced.length} scans, ${data.results.failed.length} failed`,
-        type: "success",
+        message,
+        type: failedCount > 0 ? "error" : "success",
       });
 
-      // Clear synced scans
-      setOfflineScans([]);
-      localStorage.removeItem("offlineScans");
+      // Clear synced and duplicate scans, keep only failed ones
+      if (failedCount > 0) {
+        // Keep only failed scans for retry
+        const failedQrIds = data.results.failed.map((f: any) => f.qrId);
+        const failedScans = offlineScans.filter((scan) =>
+          failedQrIds.includes(scan.qrId),
+        );
+        setOfflineScans(failedScans);
+        localStorage.setItem("offlineScans", JSON.stringify(failedScans));
+      } else {
+        // Clear all if no failures
+        setOfflineScans([]);
+        localStorage.removeItem("offlineScans");
+      }
     } catch (error) {
-      setToast({ message: "Sync failed", type: "error" });
+      console.error("Sync error:", error);
+      setToast({
+        message: "Sync failed. Please try again when connection is stable.",
+        type: "error",
+      });
     } finally {
       setSyncing(false);
     }
@@ -389,7 +459,15 @@ export default function AdminScanner() {
                   : ""
             }`}
           >
-            <h2 className="text-xl font-bold mb-4">Scan QR Code</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Scan QR Code</h2>
+              {!isOnline && (
+                <div className="flex items-center gap-2 px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-lg text-sm font-medium">
+                  <WifiOff className="w-4 h-4" />
+                  <span>Offline Mode</span>
+                </div>
+              )}
+            </div>
             <QRScanner
               onScan={handleScan}
               onError={(error) => setToast({ message: error, type: "error" })}
