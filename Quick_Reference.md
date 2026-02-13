@@ -371,9 +371,3 @@ SUPER_ADMIN_PASSWORD=    # Default: nk10nikhil
    - Monitor error rates
 
 ---
-
-**Need Help?** Check GUIDE.md for detailed documentation
-**Deployment?** See DEPLOYMENT.md for production setup
-**Issues?** Check browser console and server logs first
-
-**Version:** 1.0.0 | **Last Updated:** February 2026
