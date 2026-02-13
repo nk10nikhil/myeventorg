@@ -147,8 +147,8 @@ EMAIL_PASSWORD=your_app_password
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 # Super Admin
-SUPER_ADMIN_EMAIL=superadmin@ticketing.com
-SUPER_ADMIN_PASSWORD=SuperAdmin@123
+SUPER_ADMIN_EMAIL=nk10nikhil@gmail.com
+SUPER_ADMIN_PASSWORD=nk10nikhil
 ```
 
 ### 3. Initialize Database
@@ -240,8 +240,8 @@ Open [http://localhost:3000](http://localhost:3000)
 
 **Super Admin:**
 
-- Email: `superadmin@ticketing.com`
-- Password: `SuperAdmin@123`
+- Email: `nk10nikhil@gmail.com`
+- Password: `nk10nikhil`
 
 **⚠️ Change these immediately after first login!**
 

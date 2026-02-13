@@ -127,9 +127,9 @@ export default function SuperAdminLogin() {
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
               <strong>Default Credentials:</strong>
               <br />
-              Email: superadmin@ticketing.com
+              Email: nk10nikhil@gmail.com
               <br />
-              Password: SuperAdmin@123
+              Password: nk10nikhil
             </p>
           </div>
         </div>

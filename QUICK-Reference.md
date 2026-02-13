@@ -27,11 +27,11 @@ npm start
 
 ## 🔑 Default Access
 
-| Role        | URL            | Email                    | Password       |
-| ----------- | -------------- | ------------------------ | -------------- |
-| Super Admin | `/super-admin` | superadmin@ticketing.com | SuperAdmin@123 |
-| Admin       | `/admin`       | (create via super admin) | -              |
-| User        | `/login`       | (register via homepage)  | -              |
+| Role        | URL            | Email                    | Password   |
+| ----------- | -------------- | ------------------------ | ---------- |
+| Super Admin | `/super-admin` | nk10nikhil@gmail.com     | nk10nikhil |
+| Admin       | `/admin`       | (create via super admin) | -          |
+| User        | `/login`       | (register via homepage)  | -          |
 
 ## 📡 API Endpoints
 
@@ -212,8 +212,8 @@ EMAIL_PASSWORD=          # App password
 NEXT_PUBLIC_APP_URL=     # Your domain
 
 # Optional
-SUPER_ADMIN_EMAIL=       # Default: superadmin@ticketing.com
-SUPER_ADMIN_PASSWORD=    # Default: SuperAdmin@123
+SUPER_ADMIN_EMAIL=       # Default: nk10nikhil@gmail.com
+SUPER_ADMIN_PASSWORD=    # Default: nk10nikhil
 ```
 
 ## 🚨 Important Notes

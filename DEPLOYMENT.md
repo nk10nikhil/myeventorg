@@ -32,7 +32,7 @@ EMAIL_PASSWORD=your_app_specific_password
 NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 
 # Super Admin
-SUPER_ADMIN_EMAIL=superadmin@ticketing.com
+SUPER_ADMIN_EMAIL=nk10nikhil@gmail.com
 SUPER_ADMIN_PASSWORD=YourSecurePassword123!
 ```
 

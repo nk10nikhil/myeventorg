@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Create default super admin
-    const hashedPassword = await hashPassword("SuperAdmin@123");
+    const hashedPassword = await hashPassword("nk10nikhil");
 
     await SuperAdmin.create({
-      email: "superadmin@ticketing.com",
+      email: "nk10nikhil@gmail.com",
       password: hashedPassword,
       name: "Super Administrator",
     });
@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: "Super Admin initialized successfully",
       credentials: {
-        email: "superadmin@ticketing.com",
-        password: "SuperAdmin@123",
+        email: "nk10nikhil@gmail.com",
+        password: "nk10nikhil",
       },
     });
   } catch (error) {

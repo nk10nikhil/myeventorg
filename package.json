@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "init-db": "tsx scripts/init-superadmin.ts"
   },
   "dependencies": {
     "next": "^14.1.0",
@@ -19,6 +20,7 @@
     "html5-qrcode": "^2.3.8",
     "razorpay": "^2.9.2",
     "nodemailer": "^6.9.8",
+    "dotenv": "^16.4.1",
     "framer-motion": "^11.0.3",
     "chart.js": "^4.4.1",
     "react-chartjs-2": "^5.2.0",
@@ -33,7 +35,8 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/nodemailer": "^6.4.14",
-    "@types/qrcode": "^1.5.5",
+    "@sx": "^4.7.0",
+    "ttypes/qrcode": "^1.5.5",
     "typescript": "^5.3.3",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.33",

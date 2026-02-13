@@ -91,8 +91,8 @@ vercel
 
 ## Default Super Admin Credentials
 
-Email: `superadmin@ticketing.com`
-Password: `SuperAdmin@123`
+Email: `nk10nikhil@gmail.com`
+Password: `nk10nikhil`
 
 **Change these after first login!**
 

@@ -12,10 +12,10 @@ export function middleware(request: NextRequest) {
     "/admin/scanner",
     "/super-admin/dashboard",
   ];
-  const authRoutes = ["/login", "/register", "/admin", "/super-admin"];
+  const authRoutes = ["/login", "/register"];
 
   // Redirect authenticated users away from auth pages
-  if (token && authRoutes.some((route) => pathname.startsWith(route))) {
+  if (token && authRoutes.some((route) => pathname === route)) {
     // Decode token to check role
     try {
       const payload = JSON.parse(
@@ -33,6 +33,37 @@ export function middleware(request: NextRequest) {
       }
     } catch (error) {
       // Invalid token, continue
+    }
+  }
+
+  // Redirect authenticated users away from login pages (exact match)
+  if (token) {
+    if (pathname === "/admin") {
+      try {
+        const payload = JSON.parse(
+          Buffer.from(token.split(".")[1], "base64").toString(),
+        );
+        if (payload.role === "admin") {
+          return NextResponse.redirect(
+            new URL("/admin/dashboard", request.url),
+          );
+        }
+      } catch (error) {
+        // Invalid token
+      }
+    } else if (pathname === "/super-admin") {
+      try {
+        const payload = JSON.parse(
+          Buffer.from(token.split(".")[1], "base64").toString(),
+        );
+        if (payload.role === "superadmin") {
+          return NextResponse.redirect(
+            new URL("/super-admin/dashboard", request.url),
+          );
+        }
+      } catch (error) {
+        // Invalid token
+      }
     }
   }
 
