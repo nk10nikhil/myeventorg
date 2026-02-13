@@ -27,7 +27,11 @@ export async function POST(request: NextRequest) {
       `[Sync] Starting sync of ${offlineScans.length} offline scans for admin ${admin.id}`,
     );
 
-    const results = {
+    const results: {
+      synced: { qrId: string }[];
+      failed: { qrId: string; reason: string }[];
+      duplicates: { qrId: string; reason: string }[];
+    } = {
       synced: [],
       failed: [],
       duplicates: [],
