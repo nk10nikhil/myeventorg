@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
 import { comparePassword, generateToken } from "@/lib/auth";
+import {
+  isValidEmail,
+  isValidObjectId,
+  checkRateLimit,
+} from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +21,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await User.findOne({ email, eventId });
+    // Rate limiting
+    const clientIp = request.headers.get("x-forwarded-for") || "unknown";
+    const rateLimit = checkRateLimit(
+      `login:${clientIp}:${email}`,
+      5,
+      15 * 60 * 1000,
+    );
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please try again in 15 minutes" },
+        { status: 429 },
+      );
+    }
+
+    // Validate email
+    const sanitizedEmail = email.toLowerCase().trim();
+    if (!isValidEmail(sanitizedEmail)) {
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 },
+      );
+    }
+
+    // Validate eventId
+    if (!isValidObjectId(eventId)) {
+      return NextResponse.json({ error: "Invalid event ID" }, { status: 400 });
+    }
+
+    const user = await User.findOne({ email: sanitizedEmail, eventId });
 
     if (!user) {
       return NextResponse.json(

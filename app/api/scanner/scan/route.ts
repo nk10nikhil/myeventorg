@@ -18,7 +18,14 @@ export async function POST(request: NextRequest) {
 
     const { qrId, gateName, scannedOffline, deviceInfo } = await request.json();
 
-    // Find ticket
+    if (!qrId || !gateName) {
+      return NextResponse.json(
+        { error: "QR ID and gate name are required" },
+        { status: 400 },
+      );
+    }
+
+    // Find ticket with lock to prevent race conditions
     const ticket = await Ticket.findOne({ qrId })
       .populate("eventId")
       .populate("userId", "name email phone");
@@ -30,8 +37,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if already scanned
+    // Check if already scanned (CRITICAL: Check before any updates)
     if (ticket.scanStatus === "used") {
+      // Check if this is a duplicate scan from the same gate within 1 minute
+      const recentEntry = await Entry.findOne({
+        ticketId: ticket._id,
+        gateName,
+      }).sort({ entryTime: -1 });
+
+      if (recentEntry) {
+        const timeDiff = Date.now() - recentEntry.entryTime.getTime();
+        if (timeDiff < 60000) {
+          // Less than 1 minute, likely duplicate scan
+          return NextResponse.json(
+            {
+              error: "Ticket just scanned. Please wait",
+              status: "duplicate-scan",
+              scannedAt: recentEntry.entryTime,
+              scannedAtGate: gateName,
+            },
+            { status: 400 },
+          );
+        }
+      }
+
       return NextResponse.json(
         {
           error: "Ticket already used",
@@ -57,12 +86,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Mark ticket as used
-    ticket.scanStatus = "used";
-    ticket.scannedAt = new Date();
-    ticket.scannedBy = admin.id as any;
-    ticket.scannedAtGate = gateName;
-    await ticket.save();
+    // Mark ticket as used (atomic operation)
+    const updateResult = await Ticket.updateOne(
+      { _id: ticket._id, scanStatus: "unused" }, // Only update if still unused
+      {
+        $set: {
+          scanStatus: "used",
+          scannedAt: new Date(),
+          scannedBy: admin.id,
+          scannedAtGate: gateName,
+        },
+      },
+    );
+
+    if (updateResult.modifiedCount === 0) {
+      // Ticket was already updated by another request
+      return NextResponse.json(
+        {
+          error: "Ticket already scanned by another device",
+          status: "already-used",
+        },
+        { status: 400 },
+      );
+    }
 
     // Create entry record
     await Entry.create({
@@ -86,8 +132,8 @@ export async function POST(request: NextRequest) {
         userName: populatedTicket.userId?.name || "Unknown",
         userEmail: populatedTicket.userId?.email || "",
         eventName: event.name,
-        scannedAt: ticket.scannedAt,
-        gateName: ticket.scannedAtGate,
+        scannedAt: new Date(),
+        gateName: gateName,
       },
     });
   } catch (error) {

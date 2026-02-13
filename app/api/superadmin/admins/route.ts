@@ -3,6 +3,12 @@ import connectDB from "@/lib/db";
 import Admin from "@/models/Admin";
 import { getUserFromRequest } from "@/lib/middleware";
 import { hashPassword } from "@/lib/auth";
+import {
+  isValidEmail,
+  sanitizeString,
+  isValidPassword,
+  isValidObjectId,
+} from "@/lib/validation";
 
 export async function GET(request: NextRequest) {
   try {
@@ -46,8 +52,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sanitize inputs
+    const sanitizedName = sanitizeString(name);
+    const sanitizedEmail = email.toLowerCase().trim();
+
+    // Validate email
+    if (!isValidEmail(sanitizedEmail)) {
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 },
+      );
+    }
+
+    // Validate password
+    const passwordValidation = isValidPassword(password);
+    if (!passwordValidation.valid) {
+      return NextResponse.json(
+        { error: passwordValidation.errors[0] },
+        { status: 400 },
+      );
+    }
+
+    // Validate eventIds if provided
+    if (eventIds && eventIds.length > 0) {
+      if (!Array.isArray(eventIds) || !eventIds.every(isValidObjectId)) {
+        return NextResponse.json(
+          { error: "Invalid event IDs" },
+          { status: 400 },
+        );
+      }
+    }
+
     // Check if admin already exists
-    const existingAdmin = await Admin.findOne({ email });
+    const existingAdmin = await Admin.findOne({ email: sanitizedEmail });
     if (existingAdmin) {
       return NextResponse.json(
         { error: "Admin with this email already exists" },
@@ -60,8 +97,8 @@ export async function POST(request: NextRequest) {
 
     // Create admin
     const admin = await Admin.create({
-      name,
-      email,
+      name: sanitizedName,
+      email: sanitizedEmail,
       password: hashedPassword,
       eventIds: eventIds || [],
     });

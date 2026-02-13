@@ -1,5 +1,13 @@
 import nodemailer from "nodemailer";
 
+if (
+  !process.env.EMAIL_HOST ||
+  !process.env.EMAIL_USER ||
+  !process.env.EMAIL_PASSWORD
+) {
+  console.warn("Email configuration incomplete. Email features will not work.");
+}
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: parseInt(process.env.EMAIL_PORT || "587"),

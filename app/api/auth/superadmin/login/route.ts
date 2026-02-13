@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import SuperAdmin from "@/models/SuperAdmin";
 import { comparePassword, generateToken } from "@/lib/auth";
+import { isValidEmail, checkRateLimit } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +17,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const superAdmin = await SuperAdmin.findOne({ email });
+    // Rate limiting
+    const clientIp = request.headers.get("x-forwarded-for") || "unknown";
+    const rateLimit = checkRateLimit(
+      `superadmin-login:${clientIp}:${email}`,
+      3,
+      15 * 60 * 1000,
+    );
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please try again in 15 minutes" },
+        { status: 429 },
+      );
+    }
+
+    // Validate email
+    const sanitizedEmail = email.toLowerCase().trim();
+    if (!isValidEmail(sanitizedEmail)) {
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 },
+      );
+    }
+
+    const superAdmin = await SuperAdmin.findOne({ email: sanitizedEmail });
 
     if (!superAdmin) {
       return NextResponse.json(

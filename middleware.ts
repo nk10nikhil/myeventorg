@@ -16,11 +16,19 @@ export function middleware(request: NextRequest) {
 
   // Redirect authenticated users away from auth pages
   if (token && authRoutes.some((route) => pathname === route)) {
-    // Decode token to check role
+    // Decode token to check role (basic decode for redirect only, full verification in API routes)
     try {
       const payload = JSON.parse(
         Buffer.from(token.split(".")[1], "base64").toString(),
       );
+
+      // Basic expiry check
+      if (payload.exp && payload.exp * 1000 < Date.now()) {
+        // Token expired, clear cookie and continue
+        const response = NextResponse.next();
+        response.cookies.delete("token");
+        return response;
+      }
 
       if (payload.role === "user") {
         return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -32,7 +40,10 @@ export function middleware(request: NextRequest) {
         );
       }
     } catch (error) {
-      // Invalid token, continue
+      // Invalid token, clear cookie
+      const response = NextResponse.next();
+      response.cookies.delete("token");
+      return response;
     }
   }
 

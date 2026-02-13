@@ -1,8 +1,16 @@
 import { resolve } from "path";
-import { config } from "dotenv";
 
-// Load environment variables
-config({ path: resolve(__dirname, "../.env") });
+// Load environment variables from .env file
+// Note: This script should be run with tsx which handles dotenv automatically
+// If running directly, ensure environment variables are set
+if (process.env.NODE_ENV !== "production") {
+  try {
+    // @ts-ignore - dotenv is optional for script execution
+    require("dotenv").config({ path: resolve(__dirname, "../.env") });
+  } catch (error) {
+    console.log("Note: Using existing environment variables");
+  }
+}
 
 import connectDB from "../lib/db";
 import SuperAdmin from "../models/SuperAdmin";
