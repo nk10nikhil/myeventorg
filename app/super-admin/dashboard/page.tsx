@@ -46,6 +46,7 @@ export default function SuperAdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<any[]>([]);
   const [admins, setAdmins] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [analytics, setAnalytics] = useState<any[]>([]);
   const [toast, setToast] = useState<{
     message: string;
@@ -53,6 +54,21 @@ export default function SuperAdminDashboard() {
   } | null>(null);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
+  const [showUsersModal, setShowUsersModal] = useState(false);
+  const [showTicketsModal, setShowTicketsModal] = useState(false);
+  const [showActivityLogsModal, setShowActivityLogsModal] = useState(false);
+  const [showAllUsersModal, setShowAllUsersModal] = useState(false);
+  const [showEditUserModal, setShowEditUserModal] = useState(false);
+  const [selectedEventForUsers, setSelectedEventForUsers] = useState("");
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [activityLogs, setActivityLogs] = useState<any[]>([]);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<"overview" | "tickets" | "logs">(
+    "overview",
+  );
+  const [editingEvent, setEditingEvent] = useState<any>(null);
+  const [editingAdmin, setEditingAdmin] = useState<any>(null);
   const [eventForm, setEventForm] = useState({
     name: "",
     description: "",
@@ -67,6 +83,13 @@ export default function SuperAdminDashboard() {
     email: "",
     password: "",
     eventIds: [] as string[],
+  });
+  const [userForm, setUserForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    eventId: "",
   });
 
   useEffect(() => {
@@ -112,22 +135,177 @@ export default function SuperAdminDashboard() {
     }
   };
 
+  const fetchUsersForEvent = async (eventId: string) => {
+    try {
+      const res = await fetch(`/api/admin/users?eventId=${eventId}`);
+      const data = await res.json();
+      setUsers(data.users || []);
+    } catch (error) {
+      setToast({ message: "Failed to fetch users", type: "error" });
+    }
+  };
+
+  const handleViewUsers = (eventId: string) => {
+    setSelectedEventForUsers(eventId);
+    fetchUsersForEvent(eventId);
+    setShowUsersModal(true);
+  };
+
+  const fetchAllTickets = async () => {
+    try {
+      const res = await fetch("/api/superadmin/tickets");
+      const data = await res.json();
+      setTickets(data.tickets || []);
+      setShowTicketsModal(true);
+    } catch (error) {
+      setToast({ message: "Failed to fetch tickets", type: "error" });
+    }
+  };
+
+  const fetchAllUsers = async () => {
+    try {
+      const res = await fetch("/api/superadmin/users");
+      const data = await res.json();
+      setAllUsers(data.users || []);
+      setShowAllUsersModal(true);
+    } catch (error) {
+      setToast({ message: "Failed to fetch users", type: "error" });
+    }
+  };
+
+  const handleEditUser = (user: any) => {
+    setEditingUser(user);
+    setUserForm({
+      name: user.name,
+      email: user.email,
+      phone: user.phone || "",
+      password: "",
+      eventId: user.eventId || "",
+    });
+    setShowAllUsersModal(false);
+    setShowEditUserModal(true);
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const payload: any = {
+        name: userForm.name,
+        email: userForm.email,
+        phone: userForm.phone,
+        eventId: userForm.eventId,
+      };
+
+      if (userForm.password) {
+        payload.password = userForm.password;
+      }
+
+      const res = await fetch(`/api/superadmin/users/${editingUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to update user");
+      }
+
+      setToast({ message: "User updated successfully", type: "success" });
+      setShowEditUserModal(false);
+      setEditingUser(null);
+      fetchAllUsers();
+      setUserForm({
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+        eventId: "",
+      });
+    } catch (error: any) {
+      setToast({
+        message: error.message || "Failed to update user",
+        type: "error",
+      });
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this user? This will also delete their tickets and entries.",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/superadmin/users/${userId}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete user");
+      }
+
+      setToast({ message: "User deleted successfully", type: "success" });
+      fetchAllUsers();
+    } catch (error: any) {
+      setToast({
+        message: error.message || "Failed to delete user",
+        type: "error",
+      });
+    }
+  };
+
+  const fetchActivityLogs = async () => {
+    try {
+      const res = await fetch("/api/admin/activity-logs?limit=100");
+      const data = await res.json();
+      setActivityLogs(data.logs || []);
+      setShowActivityLogsModal(true);
+    } catch (error) {
+      setToast({ message: "Failed to fetch activity logs", type: "error" });
+    }
+  };
+
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/events", {
-        method: "POST",
+      const url = editingEvent
+        ? `/api/events/${editingEvent._id}`
+        : "/api/events";
+      const method = editingEvent ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(eventForm),
+        body: JSON.stringify({
+          ...eventForm,
+          ticketPrice: parseFloat(eventForm.ticketPrice),
+          maxCapacity: parseInt(eventForm.maxCapacity),
+        }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error("Failed to create event");
+        throw new Error(data.error || "Failed to save event");
       }
 
-      setToast({ message: "Event created successfully", type: "success" });
+      setToast({
+        message: editingEvent
+          ? "Event updated successfully"
+          : "Event created successfully",
+        type: "success",
+      });
       setShowEventModal(false);
+      setEditingEvent(null);
       fetchData();
       setEventForm({
         name: "",
@@ -138,8 +316,11 @@ export default function SuperAdminDashboard() {
         ticketPrice: "",
         maxCapacity: "",
       });
-    } catch (error) {
-      setToast({ message: "Failed to create event", type: "error" });
+    } catch (error: any) {
+      setToast({
+        message: error.message || "Failed to save event",
+        type: "error",
+      });
     }
   };
 
@@ -147,18 +328,45 @@ export default function SuperAdminDashboard() {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/superadmin/admins", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(adminForm),
-      });
+      const url = editingAdmin
+        ? `/api/superadmin/admins/${editingAdmin._id}`
+        : "/api/superadmin/admins";
+      const method = editingAdmin ? "PUT" : "POST";
 
-      if (!res.ok) {
-        throw new Error("Failed to create admin");
+      // Only include password if it's not empty
+      const payload: any = {
+        name: adminForm.name,
+        email: adminForm.email,
+        eventIds: adminForm.eventIds,
+      };
+
+      // Include password only if provided (for create or if admin wants to change it)
+      if (adminForm.password) {
+        payload.password = adminForm.password;
       }
 
-      setToast({ message: "Admin created successfully", type: "success" });
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(
+          data.error || `Failed to ${editingAdmin ? "update" : "create"} admin`,
+        );
+      }
+
+      setToast({
+        message: editingAdmin
+          ? "Admin updated successfully"
+          : "Admin created successfully",
+        type: "success",
+      });
       setShowAdminModal(false);
+      setEditingAdmin(null);
       fetchData();
       setAdminForm({
         name: "",
@@ -166,8 +374,13 @@ export default function SuperAdminDashboard() {
         password: "",
         eventIds: [],
       });
-    } catch (error) {
-      setToast({ message: "Failed to create admin", type: "error" });
+    } catch (error: any) {
+      setToast({
+        message:
+          error.message ||
+          `Failed to ${editingAdmin ? "update" : "create"} admin`,
+        type: "error",
+      });
     }
   };
 
@@ -205,6 +418,35 @@ export default function SuperAdminDashboard() {
     } catch (error) {
       setToast({ message: "Failed to delete admin", type: "error" });
     }
+  };
+
+  const handleEditEvent = (event: any) => {
+    setEditingEvent(event);
+    setEventForm({
+      name: event.name,
+      description: event.description,
+      venue: event.venue,
+      startDate: event.startDate
+        ? new Date(event.startDate).toISOString().slice(0, 16)
+        : "",
+      endDate: event.endDate
+        ? new Date(event.endDate).toISOString().slice(0, 16)
+        : "",
+      ticketPrice: event.ticketPrice.toString(),
+      maxCapacity: event.maxCapacity.toString(),
+    });
+    setShowEventModal(true);
+  };
+
+  const handleEditAdmin = (admin: any) => {
+    setEditingAdmin(admin);
+    setAdminForm({
+      name: admin.name,
+      email: admin.email,
+      password: "", // Don't populate password for security
+      eventIds: admin.eventIds?.map((e: any) => e._id || e) || [],
+    });
+    setShowAdminModal(true);
   };
 
   const handleLogout = async () => {
@@ -325,6 +567,22 @@ export default function SuperAdminDashboard() {
           ))}
         </div>
 
+        {/* Quick Access Buttons */}
+        <div className="flex flex-wrap gap-4 mb-8">
+          <Button onClick={fetchAllTickets} variant="secondary">
+            <Users className="w-4 h-4" />
+            View All Tickets
+          </Button>
+          <Button onClick={fetchAllUsers} variant="secondary">
+            <Users className="w-4 h-4" />
+            Manage All Users
+          </Button>
+          <Button onClick={fetchActivityLogs} variant="secondary">
+            <BarChart3 className="w-4 h-4" />
+            Activity Logs
+          </Button>
+        </div>
+
         {/* Analytics Chart */}
         {analytics.length > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
@@ -355,14 +613,24 @@ export default function SuperAdminDashboard() {
                       {event.venue}
                     </p>
                   </div>
-                  <button
-                    onClick={() => handleDeleteEvent(event._id)}
-                    className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 rounded-lg transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => handleEditEvent(event)}
+                      className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 rounded-lg transition-colors"
+                      aria-label="Edit event"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteEvent(event._id)}
+                      className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 rounded-lg transition-colors"
+                      aria-label="Delete event"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="text-sm space-y-1">
+                <div className="text-sm space-y-1 mb-3">
                   <p>
                     <strong>Price:</strong> ₹{event.ticketPrice}
                   </p>
@@ -374,6 +642,14 @@ export default function SuperAdminDashboard() {
                     {new Date(event.startDate).toLocaleDateString()}
                   </p>
                 </div>
+                <Button
+                  onClick={() => handleViewUsers(event._id)}
+                  variant="secondary"
+                  className="w-full text-sm py-2"
+                >
+                  <Users className="w-4 h-4" />
+                  View Users
+                </Button>
               </div>
             ))}
           </div>
@@ -404,23 +680,118 @@ export default function SuperAdminDashboard() {
                     Manages {admin.eventIds?.length || 0} event(s)
                   </p>
                 </div>
-                <button
-                  onClick={() => handleDeleteAdmin(admin._id)}
-                  className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => handleEditAdmin(admin)}
+                    className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 rounded-lg transition-colors"
+                    aria-label="Edit admin"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteAdmin(admin._id)}
+                    className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 rounded-lg transition-colors"
+                    aria-label="Delete admin"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         </div>
+
+        {/* System Statistics */}
+        <div className="grid md:grid-cols-2 gap-6 mt-8">
+          {/* Overall Stats */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h3 className="text-xl font-bold mb-4">Overall Statistics</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <span className="text-sm font-medium">Total Tickets Sold</span>
+                <span className="text-lg font-bold text-primary">
+                  {analytics.reduce((sum, a) => sum + a.totalTickets, 0)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <span className="text-sm font-medium">Users Checked In</span>
+                <span className="text-lg font-bold text-green-600">
+                  {analytics.reduce((sum, a) => sum + a.checkedIn, 0)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <span className="text-sm font-medium">Pending Check-ins</span>
+                <span className="text-lg font-bold text-orange-600">
+                  {analytics.reduce((sum, a) => sum + a.remaining, 0)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <span className="text-sm font-medium">Avg Check-in Rate</span>
+                <span className="text-lg font-bold text-blue-600">
+                  {analytics.length > 0
+                    ? (
+                        analytics.reduce((sum, a) => sum + a.checkInRate, 0) /
+                        analytics.length
+                      ).toFixed(1)
+                    : 0}
+                  %
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Event Performance */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h3 className="text-xl font-bold mb-4">Event Performance</h3>
+            <div className="space-y-3 max-h-64 overflow-y-auto">
+              {analytics.map((event: any) => (
+                <div
+                  key={event.eventId}
+                  className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-sm font-medium">
+                      {event.eventName}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {event.checkInRate.toFixed(1)}% checked in
+                    </span>
+                  </div>
+                  <div className="flex gap-4 text-xs text-gray-600 dark:text-gray-400">
+                    <span>👥 {event.totalUsers} users</span>
+                    <span>🎫 {event.totalTickets} tickets</span>
+                    <span>💰 ₹{event.revenue}</span>
+                  </div>
+                  <div className="mt-2 w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                    <div
+                      className="bg-primary h-2 rounded-full"
+                      style={{ width: `${event.checkInRate}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </main>
 
-      {/* Create Event Modal */}
+      {/* Create/Edit Event Modal */}
       <Modal
         isOpen={showEventModal}
-        onClose={() => setShowEventModal(false)}
-        title="Create New Event"
+        onClose={() => {
+          setShowEventModal(false);
+          setEditingEvent(null);
+          setEventForm({
+            name: "",
+            description: "",
+            venue: "",
+            startDate: "",
+            endDate: "",
+            ticketPrice: "",
+            maxCapacity: "",
+          });
+        }}
+        title={editingEvent ? "Edit Event" : "Create New Event"}
       >
         <form onSubmit={handleCreateEvent} className="space-y-4">
           <div>
@@ -527,16 +898,25 @@ export default function SuperAdminDashboard() {
           </div>
 
           <Button type="submit" className="w-full">
-            Create Event
+            {editingEvent ? "Update Event" : "Create Event"}
           </Button>
         </form>
       </Modal>
 
-      {/* Create Admin Modal */}
+      {/* Create/Edit Admin Modal */}
       <Modal
         isOpen={showAdminModal}
-        onClose={() => setShowAdminModal(false)}
-        title="Create New Admin"
+        onClose={() => {
+          setShowAdminModal(false);
+          setEditingAdmin(null);
+          setAdminForm({
+            name: "",
+            email: "",
+            password: "",
+            eventIds: [],
+          });
+        }}
+        title={editingAdmin ? "Edit Admin" : "Create New Admin"}
       >
         <form onSubmit={handleCreateAdmin} className="space-y-4">
           <div>
@@ -566,13 +946,23 @@ export default function SuperAdminDashboard() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Password</label>
+            <label className="block text-sm font-medium mb-2">
+              Password{" "}
+              {editingAdmin && (
+                <span className="text-xs text-gray-500">
+                  (leave blank to keep current)
+                </span>
+              )}
+            </label>
             <input
               type="password"
-              required
+              required={!editingAdmin}
               value={adminForm.password}
               onChange={(e) =>
                 setAdminForm({ ...adminForm, password: e.target.value })
+              }
+              placeholder={
+                editingAdmin ? "Leave blank to keep current password" : ""
               }
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
             />
@@ -615,7 +1005,392 @@ export default function SuperAdminDashboard() {
           </div>
 
           <Button type="submit" className="w-full">
-            Create Admin
+            {editingAdmin ? "Update Admin" : "Create Admin"}
+          </Button>
+        </form>
+      </Modal>
+
+      {/* View Users Modal */}
+      <Modal
+        isOpen={showUsersModal}
+        onClose={() => {
+          setShowUsersModal(false);
+          setUsers([]);
+          setSelectedEventForUsers("");
+        }}
+        title={`Users - ${events.find((e) => e._id === selectedEventForUsers)?.name || "Event"}`}
+        size="xl"
+      >
+        <div className="space-y-4">
+          {users.length === 0 ? (
+            <p className="text-center text-gray-500 py-4">
+              No users registered for this event yet.
+            </p>
+          ) : (
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {users.map((user: any) => (
+                <div
+                  key={user._id}
+                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="font-medium">{user.name}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {user.email}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {user.phone}
+                      </p>
+                      {user.ticket && (
+                        <div className="mt-2 text-xs space-y-1">
+                          <p>
+                            <span className="font-medium">Payment:</span>{" "}
+                            <span
+                              className={
+                                user.ticket.paymentStatus === "completed"
+                                  ? "text-green-600"
+                                  : "text-yellow-600"
+                              }
+                            >
+                              {user.ticket.paymentStatus}
+                            </span>
+                          </p>
+                          <p>
+                            <span className="font-medium">Scan Status:</span>{" "}
+                            <span
+                              className={
+                                user.ticket.scanStatus === "used"
+                                  ? "text-blue-600"
+                                  : "text-gray-600"
+                              }
+                            >
+                              {user.ticket.scanStatus}
+                            </span>
+                          </p>
+                          {user.ticket.scannedAt && (
+                            <p>
+                              <span className="font-medium">Scanned:</span>{" "}
+                              {new Date(user.ticket.scannedAt).toLocaleString()}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* All Tickets Modal */}
+      <Modal
+        isOpen={showTicketsModal}
+        onClose={() => {
+          setShowTicketsModal(false);
+          setTickets([]);
+        }}
+        title="All Tickets"
+        size="xl"
+      >
+        <div className="space-y-4">
+          {tickets.length === 0 ? (
+            <p className="text-center text-gray-500 py-4">No tickets found.</p>
+          ) : (
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="grid gap-2">
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                  Total Tickets: {tickets.length}
+                </div>
+                {tickets.map((ticket: any, index: number) => (
+                  <div
+                    key={index}
+                    className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
+                  >
+                    <div className="flex items-start justify-between mb-1">
+                      <div className="flex-1">
+                        <p className="font-medium">{ticket.userName}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          {ticket.userEmail}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          Event: {ticket.eventName}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span
+                          className={`text-xs px-2 py-1 rounded ${
+                            ticket.paymentStatus === "completed"
+                              ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                              : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
+                          }`}
+                        >
+                          {ticket.paymentStatus}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs">
+                      <span
+                        className={
+                          ticket.scanStatus === "used"
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-gray-600 dark:text-gray-400"
+                        }
+                      >
+                        {ticket.scanStatus === "used"
+                          ? "✓ Scanned"
+                          : "⏳ Not Scanned"}
+                      </span>
+                      {ticket.scannedAt && (
+                        <span className="text-gray-500">
+                          {new Date(ticket.scannedAt).toLocaleDateString()} at{" "}
+                          {new Date(ticket.scannedAt).toLocaleTimeString()}
+                        </span>
+                      )}
+                      {ticket.scannedAtGate && (
+                        <span className="text-gray-500">
+                          Gate: {ticket.scannedAtGate}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* Activity Logs Modal */}
+      <Modal
+        isOpen={showActivityLogsModal}
+        onClose={() => {
+          setShowActivityLogsModal(false);
+          setActivityLogs([]);
+        }}
+        title="Activity Logs"
+        size="xl"
+      >
+        <div className="space-y-4">
+          {activityLogs.length === 0 ? (
+            <p className="text-center text-gray-500 py-4">
+              No activity logs found.
+            </p>
+          ) : (
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                Total Logs: {activityLogs.length}
+              </div>
+              {activityLogs.map((log: any) => (
+                <div
+                  key={log._id}
+                  className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
+                >
+                  <div className="flex items-start justify-between mb-1">
+                    <div className="flex-1">
+                      <p className="font-medium">{log.action}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {log.details}
+                      </p>
+                      {log.adminId && (
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                          By:{" "}
+                          {log.adminId.name || log.adminId.email || "Unknown"}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right text-xs text-gray-500">
+                      <div>{new Date(log.timestamp).toLocaleDateString()}</div>
+                      <div>{new Date(log.timestamp).toLocaleTimeString()}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* All Users Modal */}
+      <Modal
+        isOpen={showAllUsersModal}
+        onClose={() => {
+          setShowAllUsersModal(false);
+          setAllUsers([]);
+        }}
+        title="All Users"
+        size="xl"
+      >
+        <div className="space-y-4">
+          {allUsers.length === 0 ? (
+            <p className="text-center text-gray-500 py-4">No users found.</p>
+          ) : (
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                Total Users: {allUsers.length}
+              </div>
+              {allUsers.map((user: any) => (
+                <div
+                  key={user.id}
+                  className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <p className="font-medium">{user.name}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {user.email}
+                      </p>
+                      {user.phone && (
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          📱 {user.phone}
+                        </p>
+                      )}
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Event: {user.eventName}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleEditUser(user)}
+                        variant="secondary"
+                        className="text-xs px-2 py-1"
+                      >
+                        <Edit className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        onClick={() => handleDeleteUser(user.id)}
+                        variant="danger"
+                        className="text-xs px-2 py-1"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs">
+                    <span
+                      className={
+                        user.hasTicket
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-gray-600 dark:text-gray-400"
+                      }
+                    >
+                      {user.hasTicket ? "✓ Has Ticket" : "⏳ No Ticket"}
+                    </span>
+                    {user.hasTicket && (
+                      <>
+                        <span className="text-gray-500">
+                          Payment: {user.ticketStatus}
+                        </span>
+                        <span className="text-gray-500">
+                          Scan: {user.scanStatus}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* Edit User Modal */}
+      <Modal
+        isOpen={showEditUserModal}
+        onClose={() => {
+          setShowEditUserModal(false);
+          setEditingUser(null);
+          setUserForm({
+            name: "",
+            email: "",
+            phone: "",
+            password: "",
+            eventId: "",
+          });
+        }}
+        title="Edit User"
+      >
+        <form onSubmit={handleUpdateUser} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Name</label>
+            <input
+              type="text"
+              required
+              value={userForm.name}
+              onChange={(e) =>
+                setUserForm({ ...userForm, name: e.target.value })
+              }
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Email</label>
+            <input
+              type="email"
+              required
+              value={userForm.email}
+              onChange={(e) =>
+                setUserForm({ ...userForm, email: e.target.value })
+              }
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Phone</label>
+            <input
+              type="tel"
+              value={userForm.phone}
+              onChange={(e) =>
+                setUserForm({ ...userForm, phone: e.target.value })
+              }
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Password{" "}
+              <span className="text-xs text-gray-500">
+                (leave blank to keep current)
+              </span>
+            </label>
+            <input
+              type="password"
+              value={userForm.password}
+              onChange={(e) =>
+                setUserForm({ ...userForm, password: e.target.value })
+              }
+              placeholder="Leave blank to keep current password"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Event Assignment
+            </label>
+            <select
+              value={userForm.eventId}
+              onChange={(e) =>
+                setUserForm({ ...userForm, eventId: e.target.value })
+              }
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+            >
+              <option value="">Select Event</option>
+              {events.map((event) => (
+                <option key={event._id} value={event._id}>
+                  {event.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <Button type="submit" className="w-full">
+            Update User
           </Button>
         </form>
       </Modal>

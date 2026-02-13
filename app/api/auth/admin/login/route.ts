@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Admin from "@/models/Admin";
-import OTP from "@/models/OTP";
-import { comparePassword, generateOTP } from "@/lib/auth";
-import { sendOTPEmail } from "@/lib/email";
+import { comparePassword, generateToken } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,23 +34,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate OTP
-    const otp = generateOTP();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    // Delete old OTPs
-    await OTP.deleteMany({ email });
-
-    // Save new OTP
-    await OTP.create({ email, otp, expiresAt });
-
-    // Send OTP email
-    await sendOTPEmail(email, otp);
-
-    return NextResponse.json({
-      message: "OTP sent to your email",
-      tempToken: Buffer.from(email).toString("base64"),
+    // Generate JWT token
+    const token = generateToken({
+      id: admin._id.toString(),
+      email: admin.email,
+      role: "admin",
     });
+
+    const response = NextResponse.json({
+      message: "Login successful",
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        eventIds: admin.eventIds,
+      },
+    });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60,
+    });
+
+    return response;
   } catch (error) {
     console.error("Admin login error:", error);
     return NextResponse.json({ error: "Login failed" }, { status: 500 });

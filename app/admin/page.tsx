@@ -10,13 +10,10 @@ import { ArrowLeft, Shield } from "lucide-react";
 
 export default function AdminLogin() {
   const router = useRouter();
-  const [step, setStep] = useState<"login" | "otp">("login");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    otp: "",
   });
-  const [tempToken, setTempToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
@@ -41,36 +38,6 @@ export default function AdminLogin() {
 
       if (!res.ok) {
         throw new Error(data.error || "Login failed");
-      }
-
-      setTempToken(data.tempToken);
-      setStep("otp");
-      setToast({ message: "OTP sent to your email", type: "success" });
-    } catch (error: any) {
-      setToast({ message: error.message, type: "error" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/admin/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tempToken,
-          otp: formData.otp,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Verification failed");
       }
 
       setToast({
@@ -120,85 +87,44 @@ export default function AdminLogin() {
             <div>
               <h1 className="text-3xl font-bold">Admin Login</h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Secure access with 2FA
+                Sign in to access your dashboard
               </p>
             </div>
           </div>
 
-          {step === "login" ? (
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
-                  placeholder="admin@example.com"
-                />
-              </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Email</label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+                placeholder="admin@example.com"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
-                  placeholder="••••••••"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Password</label>
+              <input
+                type="password"
+                required
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none"
+                placeholder="••••••••"
+              />
+            </div>
 
-              <Button type="submit" className="w-full" loading={loading}>
-                Send OTP
-              </Button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyOTP} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Enter OTP
-                </label>
-                <input
-                  type="text"
-                  required
-                  maxLength={6}
-                  value={formData.otp}
-                  onChange={(e) =>
-                    setFormData({ ...formData, otp: e.target.value })
-                  }
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary outline-none text-center text-2xl tracking-widest"
-                  placeholder="000000"
-                />
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  Check your email for the OTP code
-                </p>
-              </div>
-
-              <Button type="submit" className="w-full" loading={loading}>
-                Verify & Login
-              </Button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setStep("login");
-                  setFormData({ ...formData, otp: "" });
-                }}
-                className="w-full text-center text-sm text-gray-600 dark:text-gray-400 hover:text-primary"
-              >
-                Back to login
-              </button>
-            </form>
-          )}
+            <Button type="submit" className="w-full" loading={loading}>
+              Login
+            </Button>
+          </form>
         </div>
       </motion.div>
     </div>

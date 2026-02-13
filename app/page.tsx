@@ -47,7 +47,7 @@ export default function Home() {
             <Button onClick={() => router.push("/login")} variant="secondary">
               Login
             </Button>
-            <Button onClick={() => router.push("/admin")}>Admin</Button>
+            {/* <Button onClick={() => router.push("/admin")}>Admin</Button> */}
           </div>
         </div>
       </header>
@@ -64,9 +64,10 @@ export default function Home() {
             <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
               Event Ticketing Made Simple
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
-              Secure, fast, and reliable QR-based ticketing system for all your
-              events
+            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto">
+              Seamless QR-based registration, ticketing, and entry management
+              for your events. Perfect for conferences, concerts, and festivals
+              of all sizes.
             </p>
           </motion.div>
 

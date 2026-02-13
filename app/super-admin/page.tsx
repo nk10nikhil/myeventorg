@@ -121,6 +121,13 @@ export default function SuperAdminLogin() {
             <Button type="submit" className="w-full" loading={loading}>
               Login
             </Button>
+            <Button
+              onClick={() => router.push("/admin")}
+              variant="secondary"
+              className="w-full"
+            >
+              Admin Login
+            </Button>
           </form>
 
           <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">

@@ -41,13 +41,28 @@ export async function PUT(
 
     await connectDB();
 
-    const { eventIds } = await request.json();
+    const { name, email, password, eventIds } = await request.json();
 
-    const admin = await Admin.findByIdAndUpdate(
-      params.id,
-      { eventIds },
-      { new: true },
-    ).select("-password");
+    // Build update object
+    const updateData: any = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (eventIds) updateData.eventIds = eventIds;
+
+    // Only update password if provided
+    if (password) {
+      const { hashPassword } = await import("@/lib/auth");
+      updateData.password = await hashPassword(password);
+    }
+
+    const admin = await Admin.findByIdAndUpdate(params.id, updateData, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
+
+    if (!admin) {
+      return NextResponse.json({ error: "Admin not found" }, { status: 404 });
+    }
 
     return NextResponse.json({
       message: "Admin updated successfully",

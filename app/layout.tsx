@@ -6,8 +6,9 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "QR Ticketing System",
-  description: "Multi-event QR-based registration and ticketing system",
+  title: "QR Ticketing and Entry Management System",
+  description:
+    "Multi-event QR-based registration and ticketing system with admin dashboard and entry management. Built with Next.js, MongoDB, and Razorpay. Supports user registration, event creation, ticket purchasing, and real-time entry scanning. Ideal for conferences, concerts, and festivals.",
 };
 
 export default function RootLayout({

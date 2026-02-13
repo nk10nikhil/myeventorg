@@ -74,13 +74,30 @@ export default function AdminScanner() {
 
   const handleScan = async (qrData: string) => {
     try {
-      const data = JSON.parse(qrData);
-      const qrId = data.qrId;
+      console.log("Raw QR data:", qrData);
 
-      if (!qrId) {
-        showScanResult("error", "Invalid QR code format");
-        return;
+      // Try to parse as JSON
+      let qrId: string;
+      try {
+        const data = JSON.parse(qrData);
+        qrId = data.qrId;
+
+        if (!qrId) {
+          showScanResult("error", "Invalid QR code: Missing qrId");
+          return;
+        }
+      } catch (parseError) {
+        // If not JSON, try to use the data directly as qrId
+        // This handles cases where QR might contain just the ID
+        if (typeof qrData === "string" && qrData.trim().length > 0) {
+          qrId = qrData.trim();
+        } else {
+          showScanResult("error", "Invalid QR code format");
+          return;
+        }
       }
+
+      console.log("Extracted qrId:", qrId);
 
       if (isOnline) {
         // Online scan
@@ -89,13 +106,16 @@ export default function AdminScanner() {
         // Offline scan
         scanOffline(qrId);
       }
-    } catch (error) {
-      showScanResult("error", "Invalid QR code");
+    } catch (error: any) {
+      console.error("QR scan error:", error);
+      showScanResult("error", error.message || "Failed to process QR code");
     }
   };
 
   const scanOnline = async (qrId: string) => {
     try {
+      console.log("Scanning online with qrId:", qrId);
+
       const res = await fetch("/api/scanner/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -108,16 +128,31 @@ export default function AdminScanner() {
       });
 
       const data = await res.json();
+      console.log("Scan response:", data);
 
       if (data.status === "success") {
-        showScanResult("success", "Entry granted!");
+        showScanResult(
+          "success",
+          `Entry granted! Welcome ${data.ticket?.userName || "Guest"}`,
+        );
       } else if (data.status === "already-used") {
-        showScanResult("error", `Already used at ${data.scannedAtGate}`);
+        showScanResult(
+          "error",
+          `Already used at ${data.scannedAtGate || "unknown gate"} on ${data.scannedAt ? new Date(data.scannedAt).toLocaleString() : "unknown time"}`,
+        );
+      } else if (data.status === "invalid") {
+        showScanResult("error", "Invalid QR code - Ticket not found");
+      } else if (data.status === "expired") {
+        showScanResult("error", "QR code expired or not yet valid");
       } else {
         showScanResult("error", data.error || "Entry denied");
       }
     } catch (error: any) {
-      showScanResult("error", error.message || "Scan failed");
+      console.error("Online scan error:", error);
+      showScanResult(
+        "error",
+        error.message || "Scan failed - Please check connection",
+      );
     }
   };
 

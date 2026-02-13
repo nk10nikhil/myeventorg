@@ -38,11 +38,19 @@ export async function POST(request: NextRequest) {
 
     const { name, email, password, eventIds } = await request.json();
 
+    // Validate required fields
+    if (!name || !email || !password) {
+      return NextResponse.json(
+        { error: "Name, email, and password are required" },
+        { status: 400 },
+      );
+    }
+
     // Check if admin already exists
     const existingAdmin = await Admin.findOne({ email });
     if (existingAdmin) {
       return NextResponse.json(
-        { error: "Admin already exists" },
+        { error: "Admin with this email already exists" },
         { status: 400 },
       );
     }
