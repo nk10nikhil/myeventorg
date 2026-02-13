@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import type { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -42,4 +44,29 @@ export const verifyToken = (token: string): JWTPayload | null => {
 
 export const generateOTP = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+// NextAuth configuration
+export const authOptions: NextAuthOptions = {
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        // This is a placeholder - actual authentication is handled by your custom API routes
+        // NextAuth is used here primarily for session management
+        return null;
+      },
+    }),
+  ],
+  session: {
+    strategy: "jwt",
+  },
+  secret: JWT_SECRET,
+  pages: {
+    signIn: "/login",
+  },
 };

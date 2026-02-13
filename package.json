@@ -29,6 +29,7 @@
     "lucide-react": "^0.323.0",
     "next-auth": "^4.24.5",
     "canvas-confetti": "^1.9.2",
+    "qr-scanner": "^1.4.2",
     "next-themes": "^0.2.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
